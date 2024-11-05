@@ -1,34 +1,199 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerCtrl : MonoBehaviour
 {
-    public Rigidbody2D rgb;
+    [SerializeField] BoxCollider2D bc;
+    [SerializeField] float gravity, maxFallSpd;
+    [Header("Movement")]
     [SerializeField] float xspd;
+    [Header("Jump")]
+    [SerializeField] KeyCode jumpKey;
+    [SerializeField] float jumpHeight;
+    [SerializeField] float jumpInterval;
+    [SerializeField] float coyoteTime;
+    [Header("Wall Jump")]
+    [SerializeField] float climbDist;
+    [SerializeField] float onWallYSpd; //y speed when on a wall
+    [SerializeField] float wallJumpXSpd; //x speed when make a wall jump
+    [SerializeField] float wallJumpXSpdInterval; //
+    [Header("Dash")]
+    [SerializeField] float dashDist;
+    [SerializeField] float[] dashPercents;
+    [Header("Ground Check")]
+    [SerializeField] Vector2 leftBot;
+    [SerializeField] Vector2 rightBot;
+    [SerializeField] LayerMask groundLayer;
+    [Header("Ceiling Check")]
+    [SerializeField] Vector2 leftTop;
+    [SerializeField] Vector2 rightTop;
 
-    Vector2 v;
+    [HideInInspector] public Rigidbody2D rgb;
+    [HideInInspector] public Animator animator;
+    public static PlayerCtrl inst;
+    Vector2 v; //velocity
+    bool onGround, prevOnGround;
+    float jumpKeyDown;
+    bool jumpKeyUp;
+    Vector2 climbTop, climbBot;
+    bool onWall, wallJumping;
+    Coroutine wallJumpCoro;
+    bool dashing, dashKeyDown, canDash;
+    float yspd;
+    int dir;
+    public int Dir{
+        get=>dir;
+        set{
+            dir=value;
+            leftTop.x*=-1;
+            rightTop.x*=-1;
+            leftBot.x*=-1;
+            rightBot.x*=-1;
+            transform.localScale=new Vector3(dir,1,1);
+            climbTop.x*=-1;
+            climbBot.x*=-1;
+            return;
+        }
+    }
+    void OnValidate(){
+        climbTop=new Vector2(climbDist, bc.offset.y+bc.size.y/2);
+        climbBot=new Vector2(climbDist, bc.offset.y-bc.size.y/2);
+    }
+    void OnDrawGizmosSelected(){
+        Gizmos.color=Color.green;
+        //ground check
+        Gizmos.DrawLine((Vector2)transform.position+leftBot, (Vector2)transform.position+rightBot);
+        //ceiling check
+        Gizmos.DrawLine((Vector2)transform.position+leftTop, (Vector2)transform.position+rightTop);
+        //jump height
+        Gizmos.DrawLine(transform.position+new Vector3(-.2f,0,0),transform.position+new Vector3(.2f,0,0));
+        Gizmos.DrawLine(transform.position,transform.position+new Vector3(0,jumpHeight,0));
+        Gizmos.DrawLine(transform.position+new Vector3(-.2f,jumpHeight,0),transform.position+new Vector3(.2f,jumpHeight,0));
+        //wall jump
+        Gizmos.DrawLine((Vector2)transform.position+climbTop, (Vector2)transform.position+climbBot);
+    }
+    void Awake(){
+        inst=this;
+    }
     // Start is called before the first frame update
     void Start()
     {
-        
+        Dir=-1;
+        jumpKeyDown=-100;
+        rgb=GetComponent<Rigidbody2D>();
+        animator=GetComponent<Animator>();
+        yspd=jumpHeight/jumpInterval-0.5f*gravity*jumpInterval;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if(Input.GetKeyDown(jumpKey))
+            jumpKeyDown=Time.time;
+        else if(Input.GetKeyUp(jumpKey))
+            jumpKeyUp=true;
+        if(Input.GetKeyDown(KeyCode.L))
+            dashKeyDown=true;
     }
     void FixedUpdate(){
+        CheckWall();
         Movement();
+        Jump();
+        CheckOnGround();
+        CeilingCheck();
+        ApplyGravity();
         UpdateVelocity();
     }
     void UpdateVelocity(){
         rgb.velocity=v;
     }
+    void ApplyGravity(){
+        if(dashing) return;
+        if(onGround){
+            if(!prevOnGround && v.y<0) //on ground enter
+                v.y=0;
+        }//if player is not wall jumping, is on wall, and is pressing the button the opposite dir of [dir], then the player should cling on the wall
+        else if(!wallJumping&&onWall&&v.y<=0&&((dir==1 && Input.GetKey(KeyCode.A)) || (dir==-1 && Input.GetKey(KeyCode.D)))){
+            v.y=onWallYSpd;
+        }
+        else if(v.y>=maxFallSpd)
+            v.y+=gravity*Time.fixedDeltaTime;
+    }
     void Movement(){
+        //dash
+        if(onGround || onWall) canDash=true;
+        if(dashKeyDown){
+            dashKeyDown=false;
+            if(canDash){
+                canDash=false;
+                StartCoroutine(Dash());
+            }
+            return;
+        }
+        if(dashing) return;
         float x=Input.GetAxisRaw("Horizontal");
-        v.x=x*xspd;
-        v.y=rgb.velocity.y;
+        if(!wallJumping){
+            v.x=x*xspd;
+        }
+        //change direction
+        if(x!=0 && x!=-dir){
+            Dir=-(int)x;
+        }
+        //play animation
+        animator.SetBool("run", x!=0);
+    }
+    IEnumerator Dash(){
+        dashing=true;
+        v.y=0;
+        WaitForFixedUpdate wait=new WaitForFixedUpdate();
+        //frame 1: anticipate, 2: 0.6*dist, 3: 0.8*dist, 4: 0.9*dist
+        yield return wait;
+        float dashSpd=dashDist/Time.fixedDeltaTime;
+        for(int i=0;i<dashPercents.Length;++i){
+            v.x=dir<=0?dashPercents[i]*dashSpd:-dashPercents[i]*dashSpd;
+            yield return wait;
+        }
+        dashing=false;
+    }
+    void CheckOnGround(){
+        prevOnGround=onGround;
+        onGround = Physics2D.OverlapArea((Vector2)transform.position+leftBot, (Vector2)transform.position+rightBot, groundLayer);
+    }
+    void CeilingCheck(){
+        if(Physics2D.OverlapArea((Vector2)transform.position+leftTop, (Vector2)transform.position+rightTop, groundLayer)){
+            if(v.y>0) v.y=0;
+        }
+    }
+    void Jump(){
+        if(dashing) return;
+        if(Time.time-jumpKeyDown<=coyoteTime){
+            jumpKeyDown=-100;
+            if(onGround){ //ground jump
+                v.y=yspd;
+            } else if(onWall){ //wall jump
+                v.y=yspd;
+                v.x=dir*wallJumpXSpd;
+                wallJumpCoro = StartCoroutine(WallJumpCounter());
+            }
+        }
+        if(jumpKeyUp){
+            jumpKeyUp=false;
+            if(wallJumpCoro!=null){
+                StopCoroutine(wallJumpCoro);
+                wallJumpCoro=null;
+                wallJumping=false;
+            }
+            if(v.y>0)
+                v.y=0;
+        }
+    }
+    void CheckWall(){
+        onWall = Physics2D.OverlapArea((Vector2)transform.position+climbBot, (Vector2)transform.position+climbTop, groundLayer);
+    }
+    IEnumerator WallJumpCounter(){
+        wallJumping=true;
+        yield return new WaitForSeconds(wallJumpXSpdInterval);
+        wallJumping=false;
+        wallJumpCoro=null;
     }
 }
