@@ -4,43 +4,47 @@ using UnityEngine;
 public class PlayerCtrl : MonoBehaviour
 {
     [SerializeField] BoxCollider2D bc;
-    [SerializeField] float gravity, maxFallSpd;
+    public float gravity, maxFallSpd;
     [Header("Movement")]
-    [SerializeField] float xspd;
+    public float xspd;
     [Header("Jump")]
-    [SerializeField] KeyCode jumpKey;
-    [SerializeField] float jumpHeight;
-    [SerializeField] float jumpInterval;
-    [SerializeField] float coyoteTime;
+    public KeyCode jumpKey;
+    public float jumpHeight;
+    public float jumpInterval;
+    public float coyoteTime;
     [Header("Wall Jump")]
-    [SerializeField] float climbDist;
-    [SerializeField] float onWallYSpd; //y speed when on a wall
-    [SerializeField] float wallJumpXSpd; //x speed when make a wall jump
-    [SerializeField] float wallJumpXSpdInterval; //
+    public float climbDist;
+    public float onWallYSpd; //y speed when on a wall
+    public float wallJumpXSpd; //x speed when make a wall jump
+    public float wallJumpXSpdInterval; //
     [Header("Dash")]
-    [SerializeField] float dashDist;
-    [SerializeField] float[] dashPercents;
+    public float dashDist;
+    public float[] dashPercents;
     [Header("Ground Check")]
-    [SerializeField] Vector2 leftBot;
-    [SerializeField] Vector2 rightBot;
-    [SerializeField] LayerMask groundLayer;
+    public Vector2 leftBot;
+    public Vector2 rightBot;
+    public LayerMask groundLayer;
     [Header("Ceiling Check")]
-    [SerializeField] Vector2 leftTop;
-    [SerializeField] Vector2 rightTop;
+    public Vector2 leftTop;
+    public Vector2 rightTop;
 
     [HideInInspector] public Rigidbody2D rgb;
     [HideInInspector] public Animator animator;
-    public static PlayerCtrl inst;
-    Vector2 v; //velocity
-    bool onGround, prevOnGround;
-    float jumpKeyDown;
-    bool jumpKeyUp;
-    Vector2 climbTop, climbBot;
-    bool onWall, wallJumping;
-    Coroutine wallJumpCoro;
-    bool dashing, dashKeyDown, canDash;
-    float yspd;
-    int dir;
+
+    //inputs
+    [HideInInspector] public int inputx;
+
+    [HideInInspector] public static PlayerCtrl inst;
+    [HideInInspector] public Vector2 v; //velocity
+    [HideInInspector] public bool onGround, prevOnGround;
+    [HideInInspector] public float jumpKeyDown;
+    [HideInInspector] public bool jumpKeyUp;
+    [HideInInspector] public Vector2 climbTop, climbBot;
+    [HideInInspector] public bool onWall, wallJumping;
+    [HideInInspector] public Coroutine wallJumpCoro;
+    [HideInInspector] public bool dashing, dashKeyDown, canDash;
+    [HideInInspector] public float yspd;
+    [HideInInspector] public int dir;
     public int Dir{
         get=>dir;
         set{
@@ -96,13 +100,19 @@ public class PlayerCtrl : MonoBehaviour
             dashKeyDown=true;
     }
     void FixedUpdate(){
+        HandleInputs();
+        CheckOnGround();
+        /*
         CheckWall();
         Movement();
         Jump();
-        CheckOnGround();
         CeilingCheck();
         ApplyGravity();
+        */
         UpdateVelocity();
+    }
+    void HandleInputs(){
+        inputx=(int)Input.GetAxisRaw("Horizontal");
     }
     void UpdateVelocity(){
         rgb.velocity=v;
@@ -158,34 +168,8 @@ public class PlayerCtrl : MonoBehaviour
     void CheckOnGround(){
         prevOnGround=onGround;
         onGround = Physics2D.OverlapArea((Vector2)transform.position+leftBot, (Vector2)transform.position+rightBot, groundLayer);
-    }
-    void CeilingCheck(){
-        if(Physics2D.OverlapArea((Vector2)transform.position+leftTop, (Vector2)transform.position+rightTop, groundLayer)){
-            if(v.y>0) v.y=0;
-        }
-    }
-    void Jump(){
-        if(dashing) return;
-        if(Time.time-jumpKeyDown<=coyoteTime){
-            jumpKeyDown=-100;
-            if(onGround){ //ground jump
-                v.y=yspd;
-            } else if(onWall){ //wall jump
-                v.y=yspd;
-                v.x=dir*wallJumpXSpd;
-                wallJumpCoro = StartCoroutine(WallJumpCounter());
-            }
-        }
-        if(jumpKeyUp){
-            jumpKeyUp=false;
-            if(wallJumpCoro!=null){
-                StopCoroutine(wallJumpCoro);
-                wallJumpCoro=null;
-                wallJumping=false;
-            }
-            if(v.y>0)
-                v.y=0;
-        }
+        if(onGround)
+            canDash=true;
     }
     void CheckWall(){
         onWall = Physics2D.OverlapArea((Vector2)transform.position+climbBot, (Vector2)transform.position+climbTop, groundLayer);
