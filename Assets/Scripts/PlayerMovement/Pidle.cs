@@ -34,6 +34,8 @@ public class Pidle : PStateBase
             Jump();
             //dash
             Dash();
+            //counter
+            Counter();
             //apply gravity
             ApplyGravity();
             yield return wait;

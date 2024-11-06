@@ -31,6 +31,7 @@ public class Prun : PStateBase
             Movement();
             Jump();
             Dash();
+            Counter();
             ApplyGravity();
             yield return wait;
         }

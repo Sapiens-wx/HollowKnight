@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
 
-public class Pdash : PStateBase
+public class Pjump : PStateBase
 {
     Coroutine coro;
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
-        if(player.inputx!=0 && player.inputx==player.Dir) //change direction of dash
-            player.Dir=-player.inputx;
+        player.v.x=0;
+        player.v.y=0;
+        player.hittable=false;
         coro = player.StartCoroutine(m_FixedUpdate());
-        player.StartCoroutine(DashAnim());
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -25,6 +25,7 @@ public class Pdash : PStateBase
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        player.hittable=true;
         player.StopCoroutine(coro);
         coro=null;
     }

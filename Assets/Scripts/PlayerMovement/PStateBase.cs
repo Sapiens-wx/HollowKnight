@@ -58,10 +58,6 @@ public class PStateBase : StateMachineBehaviour
         }
         player.animator.SetTrigger("dash_recover");
     }
-    virtual internal void CheckOnGround(){
-        player.prevOnGround=player.onGround;
-        player.onGround = Physics2D.OverlapArea((Vector2)player.transform.position+player.leftBot, (Vector2)player.transform.position+player.rightBot, player.groundLayer);
-    }
     internal void CeilingCheck(){
         if(Physics2D.OverlapArea((Vector2)player.transform.position+player.leftTop, (Vector2)player.transform.position+player.rightTop, player.groundLayer)){
             if(player.v.y>0) player.animator.SetTrigger("jump_down");
@@ -98,5 +94,11 @@ public class PStateBase : StateMachineBehaviour
         yield return new WaitForSeconds(player.wallJumpXSpdInterval);
         player.wallJumping=false;
         player.wallJumpCoro=null;
+    }
+    internal void Counter(){
+        if(player.onGround && Time.time-player.counterKeyDown<=player.counterBufferTime){
+            player.counterKeyDown=-100;
+            player.animator.SetTrigger("counter");
+        }
     }
 }

@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class PlayerCtrl : MonoBehaviour
 {
-    [SerializeField] BoxCollider2D bc;
+    public BoxCollider2D bc;
     public float gravity, maxFallSpd;
     [Header("Movement")]
     public float xspd;
@@ -20,6 +20,8 @@ public class PlayerCtrl : MonoBehaviour
     [Header("Dash")]
     public float dashDist;
     public float[] dashPercents;
+    [Header("Counter")]
+    public float counterBufferTime;
     [Header("Ground Check")]
     public Vector2 leftBot;
     public Vector2 rightBot;
@@ -36,6 +38,7 @@ public class PlayerCtrl : MonoBehaviour
 
     [HideInInspector] public static PlayerCtrl inst;
     [HideInInspector] public Vector2 v; //velocity
+    [HideInInspector] public bool hittable;
     [HideInInspector] public bool onGround, prevOnGround;
     [HideInInspector] public float jumpKeyDown;
     [HideInInspector] public bool jumpKeyUp;
@@ -45,6 +48,7 @@ public class PlayerCtrl : MonoBehaviour
     [HideInInspector] public bool dashing, dashKeyDown, canDash;
     [HideInInspector] public float yspd;
     [HideInInspector] public int dir;
+    [HideInInspector] public float counterKeyDown;
     public int Dir{
         get=>dir;
         set{
@@ -82,8 +86,10 @@ public class PlayerCtrl : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        hittable=true;
         Dir=-1;
         jumpKeyDown=-100;
+        counterKeyDown=-100;
         rgb=GetComponent<Rigidbody2D>();
         animator=GetComponent<Animator>();
         yspd=jumpHeight/jumpInterval-0.5f*gravity*jumpInterval;
@@ -98,6 +104,8 @@ public class PlayerCtrl : MonoBehaviour
             jumpKeyUp=true;
         if(Input.GetKeyDown(KeyCode.L))
             dashKeyDown=true;
+        if(Input.GetKeyDown(KeyCode.O))
+            counterKeyDown=Time.time;
     }
     void FixedUpdate(){
         HandleInputs();
@@ -111,6 +119,13 @@ public class PlayerCtrl : MonoBehaviour
         */
         UpdateVelocity();
     }
+    #region hit
+    void OnTriggerEnter2D(Collider2D collider){
+        if(hittable && collider.gameObject.layer==8){ //if is enemy
+            animator.SetTrigger("hit");
+        }
+    }
+    #endregion
     void HandleInputs(){
         inputx=(int)Input.GetAxisRaw("Horizontal");
     }
