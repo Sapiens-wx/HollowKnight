@@ -36,6 +36,8 @@ public class Pidle : PStateBase
             Dash();
             //counter
             Counter();
+            //throw
+            Throw();
             //apply gravity
             ApplyGravity();
             yield return wait;

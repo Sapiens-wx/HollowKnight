@@ -40,8 +40,8 @@ public class PStateBase : StateMachineBehaviour
     }
     virtual internal void Dash(){
         //dash
-        if(player.dashKeyDown){
-            player.dashKeyDown=false;
+        if(Time.time-player.dashKeyDown<=player.dashBuffTime){
+            player.dashKeyDown=-100;
             if(player.canDash){
                 player.canDash=false;
                 player.animator.SetTrigger("dash");
@@ -95,10 +95,21 @@ public class PStateBase : StateMachineBehaviour
         player.wallJumping=false;
         player.wallJumpCoro=null;
     }
+    internal IEnumerator InvincibleTimer(){
+        yield return new WaitForSeconds(player.invincibleTime);
+        player.hittable=true;
+    }
     internal void Counter(){
         if(player.onGround && Time.time-player.counterKeyDown<=player.counterBufferTime){
             player.counterKeyDown=-100;
             player.animator.SetTrigger("counter");
+        }
+    }
+    internal void Throw(){
+        if(Time.time-player.throwKeyDown<=player.throwBufferTime){
+            player.throwChargeStartTime=player.throwKeyDown;
+            player.throwKeyDown=-100;
+            player.animator.SetTrigger("throw_charge");
         }
     }
 }

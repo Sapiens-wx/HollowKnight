@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
 
-public class Prun : PStateBase
+public class Pthrow_charge : PStateBase
 {
     Coroutine coro;
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
@@ -28,38 +28,12 @@ public class Prun : PStateBase
     IEnumerator m_FixedUpdate(){
         WaitForFixedUpdate wait=new WaitForFixedUpdate();
         while(true){
-            Movement();
-            Jump();
-            Dash();
-            Counter();
-            Throw();
-            ApplyGravity();
+            if(player.throwKeyUp){
+                player.throwKeyUp=false;
+                player.throwChargeStartTime=Time.time-player.throwChargeStartTime;
+                player.animator.SetTrigger("throw");
+            }
             yield return wait;
-        }
-    }
-    override internal void Movement(){
-        player.v.x=player.xspd*player.inputx;
-        //change direction
-        if(player.inputx==0){
-            player.animator.SetTrigger("idle");
-        }
-        else if(player.inputx!=-player.dir){
-            player.Dir=-player.inputx;
-        }
-    }
-    override internal void Jump(){
-        if(Time.time-player.jumpKeyDown<=player.coyoteTime){
-            player.jumpKeyDown=-100;
-            player.animator.SetTrigger("jump_up");
-        }
-    }
-    override internal void ApplyGravity(){
-        if(player.onGround){
-            if(!player.prevOnGround && player.v.y<0) //on ground enter
-                player.v.y=0;
-        }
-        else{
-            player.animator.SetTrigger("jump_down");
         }
     }
 }
