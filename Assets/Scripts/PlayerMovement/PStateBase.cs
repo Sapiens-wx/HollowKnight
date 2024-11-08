@@ -60,7 +60,10 @@ public class PStateBase : StateMachineBehaviour
     }
     internal void CeilingCheck(){
         if(Physics2D.OverlapArea((Vector2)player.transform.position+player.leftTop, (Vector2)player.transform.position+player.rightTop, player.groundLayer)){
-            if(player.v.y>0) player.animator.SetTrigger("jump_down");
+            if(player.v.y>0){
+                player.v.y=0;
+                player.animator.SetTrigger("jump_down");
+            } 
         }
     }
     virtual internal void Jump(){

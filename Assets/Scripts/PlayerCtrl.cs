@@ -24,6 +24,8 @@ public class PlayerCtrl : MonoBehaviour
     public float[] dashPercents;
     [Header("Counter")]
     public float counterBufferTime;
+    [Header("Attack")]
+    public float downSlashJumpSpd;
     [Header("Throw")]
     public float throwBufferTime;
     [Header("Ground Check")]
@@ -56,6 +58,7 @@ public class PlayerCtrl : MonoBehaviour
     [HideInInspector] public float counterKeyDown;
     [HideInInspector] public float throwKeyDown, throwChargeStartTime;
     [HideInInspector] public bool throwKeyUp;
+    [HideInInspector] public bool attack_down; //whether is in attack_down state
     public int Dir{
         get=>dir;
         set{
@@ -109,8 +112,10 @@ public class PlayerCtrl : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.O))//counter
             counterKeyDown=Time.time;
-        else if(Input.GetKeyDown(KeyCode.J))//throw
+        else if(Input.GetKeyDown(KeyCode.J)){//throw
             throwKeyDown=Time.time;
+            throwKeyUp=false;
+        }
         else if(Input.GetKeyDown(KeyCode.L))//dash
             dashKeyDown=Time.time;
         else if(Input.GetKeyDown(jumpKey))
@@ -136,6 +141,11 @@ public class PlayerCtrl : MonoBehaviour
     #region hit
     void OnTriggerStay2D(Collider2D collider){
         if(hittable && collider.gameObject.layer==8){ //if is enemy
+            animator.SetTrigger("hit");
+        }
+    }
+    void OnCollisionEnter2D(Collision2D collision){
+        if(hittable && collision.collider.gameObject.layer==8){ //if is enemy
             animator.SetTrigger("hit");
         }
     }

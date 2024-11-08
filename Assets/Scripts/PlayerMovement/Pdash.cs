@@ -16,6 +16,8 @@ public class Pdash : PStateBase
             player.Dir=-player.inputx;
         coro = player.StartCoroutine(m_FixedUpdate());
         dashCoro = player.StartCoroutine(DashAnim());
+
+        PlayerEffects.inst.PlayDashEffect();
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks

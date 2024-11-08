@@ -4,7 +4,7 @@ using Unity.Burst.Intrinsics;
 using Unity.Collections;
 using UnityEngine;
 
-public class Pjump_up : PStateBase
+public class Pattack_down_jump_up : PStateBase
 {
     Coroutine coro;
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
@@ -12,15 +12,17 @@ public class Pjump_up : PStateBase
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
         player.jumpKeyUp=false;
-        player.v.y=player.yspd;
+        player.canDash=true;
+        player.v.y=player.downSlashJumpSpd;
         coro = player.StartCoroutine(m_FixedUpdate());
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
-    //override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    
-    //}
+    override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        if(Input.GetKeyDown(KeyCode.J))
+            animator.SetTrigger("attack_down");
+    }
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -32,8 +34,8 @@ public class Pjump_up : PStateBase
         WaitForFixedUpdate wait=new WaitForFixedUpdate();
         while(true){
             Movement();
-            Jump();
             Dash();
+            Jump();
             ApplyGravity();
             CeilingCheck();
             yield return wait;
@@ -43,9 +45,7 @@ public class Pjump_up : PStateBase
         player.v.y+=player.gravity*Time.fixedDeltaTime;
     }
     override internal void Jump(){
-        if(player.v.y<=0 || player.jumpKeyUp){
-            player.jumpKeyUp=false;
-            player.v.y=0;
+        if(player.v.y<=0){
             player.animator.SetTrigger("jump_down");
         }
     }

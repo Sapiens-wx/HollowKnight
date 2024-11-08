@@ -31,6 +31,7 @@ public class Pcounter : PStateBase
         if(setBoolCoro!=null){
             player.StopCoroutine(setBoolCoro);
             setBoolCoro=null;
+            animator.SetBool("counter_attack", false);
         }
     }
     IEnumerator m_FixedUpdate(){

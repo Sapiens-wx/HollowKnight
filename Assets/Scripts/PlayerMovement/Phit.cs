@@ -13,7 +13,7 @@ public class Phit : PStateBase
         player.v.y=0;
         player.hittable=false;
         player.StartCoroutine(InvincibleTimer());
-        animator.SetTrigger(player.onGround?"hit":"hit_air");
+        animator.SetTrigger(player.onGround?"hit_ground":"hit_air");
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks

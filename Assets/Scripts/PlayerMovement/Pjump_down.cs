@@ -11,14 +11,14 @@ public class Pjump_down : PStateBase
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
         coro = player.StartCoroutine(m_FixedUpdate());
-        player.v.y=0;
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
-    //override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    
-    //}
+    override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        if(Input.GetKeyDown(KeyCode.J))
+            animator.SetTrigger("attack_down");
+    }
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -33,13 +33,6 @@ public class Pjump_down : PStateBase
             Dash();
             ApplyGravity();
             yield return wait;
-        }
-    }
-    override internal void Movement(){
-        player.v.x=player.xspd*player.inputx;
-        //change direction
-        if(player.inputx!=0 && player.inputx!=-player.dir){
-            player.Dir=-player.inputx;
         }
     }
     override internal void ApplyGravity(){
