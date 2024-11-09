@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class PlayerCtrl : MonoBehaviour
 {
+    public Animator swordAnimator;
     public BoxCollider2D bc;
     public float gravity, maxFallSpd;
     public float invincibleTime;
@@ -112,7 +113,7 @@ public class PlayerCtrl : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.O))//counter
             counterKeyDown=Time.time;
-        else if(Input.GetKeyDown(KeyCode.J)){//throw
+        else if(Input.GetKeyDown(KeyCode.I)){//throw
             throwKeyDown=Time.time;
             throwKeyUp=false;
         }
@@ -122,8 +123,12 @@ public class PlayerCtrl : MonoBehaviour
             jumpKeyDown=Time.time;
         else if(Input.GetKeyUp(jumpKey))
             jumpKeyUp=true;
+        else if(Input.GetKeyDown(KeyCode.J)){
+            if(!onGround) //down slash
+                swordAnimator.SetTrigger("down_slash");
+        }
         
-        if(Input.GetKeyUp(KeyCode.J))//throw end charge
+        if(Input.GetKeyUp(KeyCode.I))//throw end charge
             throwKeyUp=true;
     }
     void FixedUpdate(){

@@ -1,7 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Pattack_down : PStateBase
@@ -31,8 +29,6 @@ public class Pattack_down : PStateBase
     IEnumerator m_FixedUpdate(){
         WaitForFixedUpdate wait=new WaitForFixedUpdate();
         while(true){
-            Movement();
-            ApplyGravity();
             yield return wait;
         }
     }
