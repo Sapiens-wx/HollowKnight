@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
 
-public class Pthrow : PStateBase
+public class PdashToNail : PStateBase
 {
     Coroutine coro;
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
@@ -11,7 +11,8 @@ public class Pthrow : PStateBase
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
         coro = player.StartCoroutine(m_FixedUpdate());
-        NailBehav.inst.Thrown();
+        player.v.x=player.dashToNailSpd;
+        player.StartCoroutine(DashCounter());
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -31,5 +32,10 @@ public class Pthrow : PStateBase
         while(true){
             yield return wait;
         }
+    }
+    IEnumerator DashCounter(){
+        yield return new WaitForSeconds((NailBehav.inst.transform.position.x-player.transform.position.x)/player.dashToNailSpd);
+        player.v.x=0;
+        player.animator.SetTrigger("idle");
     }
 }

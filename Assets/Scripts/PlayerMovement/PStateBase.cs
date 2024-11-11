@@ -40,7 +40,7 @@ public class PStateBase : StateMachineBehaviour
     }
     virtual internal void Dash(){
         //dash
-        if(Time.time-player.dashKeyDown<=player.dashBuffTime){
+        if(Time.time-player.dashKeyDown<=player.keyDownBuffTime){
             player.dashKeyDown=-100;
             if(player.canDash){
                 player.canDash=false;
@@ -103,20 +103,20 @@ public class PStateBase : StateMachineBehaviour
         player.hittable=true;
     }
     internal void Counter(){
-        if(player.onGround && Time.time-player.counterKeyDown<=player.counterBufferTime){
+        if(player.onGround && Time.time-player.counterKeyDown<=player.keyDownBuffTime){
             player.counterKeyDown=-100;
             player.animator.SetTrigger("counter");
         }
     }
     internal void Throw(){
-        if(Time.time-player.throwKeyDown<=player.throwBufferTime){
-            player.throwChargeStartTime=player.throwKeyDown;
+        if(Time.time-player.throwKeyDown<=player.keyDownBuffTime){
+            player.throwChargeTime=player.throwKeyDown;
             player.throwKeyDown=-100;
             player.animator.SetTrigger("throw_charge");
         }
     }
     internal void Attack(){
-        if(Time.time-player.attackKeyDown<=player.throwBufferTime){
+        if(Time.time-player.attackKeyDown<=player.keyDownBuffTime){
             player.attackKeyDown=-100;
             if(!player.onGround && Input.GetKey(KeyCode.S))
                 player.swordAnimator.SetTrigger("down_slash");

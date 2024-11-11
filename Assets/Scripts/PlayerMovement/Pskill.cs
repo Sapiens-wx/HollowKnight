@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
 
-public class Pthrow : PStateBase
+public class Pjump : PStateBase
 {
     Coroutine coro;
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
@@ -11,7 +11,6 @@ public class Pthrow : PStateBase
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
         coro = player.StartCoroutine(m_FixedUpdate());
-        NailBehav.inst.Thrown();
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks

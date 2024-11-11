@@ -7,6 +7,7 @@ public class PlayerCtrl : MonoBehaviour
     public BoxCollider2D bc;
     public float gravity, maxFallSpd;
     public float invincibleTime;
+    public float keyDownBuffTime;
     [Header("Movement")]
     public float xspd;
     [Header("Jump")]
@@ -20,16 +21,14 @@ public class PlayerCtrl : MonoBehaviour
     public float wallJumpXSpd; //x speed when make a wall jump
     public float wallJumpXSpdInterval; //
     [Header("Dash")]
-    public float dashBuffTime;
     public float dashDist;
     public float[] dashPercents;
-    [Header("Counter")]
-    public float counterBufferTime;
     [Header("Attack")]
     public float downSlashJumpSpd;
-    public float attackBufferTime;
     [Header("Throw")]
-    public float throwBufferTime;
+    public Vector2 throwNailOffset;
+    public float maxThrowChargeTime;
+    public float dashToNailSpd;
     [Header("Ground Check")]
     public Vector2 leftBot;
     public Vector2 rightBot;
@@ -58,10 +57,11 @@ public class PlayerCtrl : MonoBehaviour
     [HideInInspector] public float yspd;
     [HideInInspector] public int dir;
     [HideInInspector] public float counterKeyDown;
-    [HideInInspector] public float throwKeyDown, throwChargeStartTime;
+    [HideInInspector] public float throwKeyDown, throwChargeTime;
     [HideInInspector] public bool throwKeyUp;
     [HideInInspector] public bool attack_down; //whether is in attack_down state
     [HideInInspector] public float attackKeyDown; //whether is in attack_down state
+    [HideInInspector] public float skillKeyDown; 
     public int Dir{
         get=>dir;
         set{
@@ -73,6 +73,8 @@ public class PlayerCtrl : MonoBehaviour
             transform.localScale=new Vector3(dir,1,1);
             climbTop.x*=-1;
             climbBot.x*=-1;
+            throwNailOffset.x*=-1;
+            dashToNailSpd*=-1;
             return;
         }
     }
@@ -92,6 +94,8 @@ public class PlayerCtrl : MonoBehaviour
         Gizmos.DrawLine(transform.position+new Vector3(-.2f,jumpHeight,0),transform.position+new Vector3(.2f,jumpHeight,0));
         //wall jump
         Gizmos.DrawLine((Vector2)transform.position+climbTop, (Vector2)transform.position+climbBot);
+        //throw
+        Gizmos.DrawWireSphere(transform.position+(Vector3)throwNailOffset, .3f);
     }
     void Awake(){
         inst=this;
@@ -109,6 +113,7 @@ public class PlayerCtrl : MonoBehaviour
         rgb=GetComponent<Rigidbody2D>();
         animator=GetComponent<Animator>();
         yspd=jumpHeight/jumpInterval-0.5f*gravity*jumpInterval;
+        OnValidate();
     }
 
     // Update is called once per frame
@@ -116,6 +121,8 @@ public class PlayerCtrl : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.O))//counter
             counterKeyDown=Time.time;
+        else if(Input.GetKeyDown(KeyCode.U)) //skill
+            skillKeyDown=Time.time;
         else if(Input.GetKeyDown(KeyCode.I)){//throw
             throwKeyDown=Time.time;
             throwKeyUp=false;
@@ -126,9 +133,8 @@ public class PlayerCtrl : MonoBehaviour
             jumpKeyDown=Time.time;
         else if(Input.GetKeyUp(jumpKey))
             jumpKeyUp=true;
-        else if(Input.GetKeyDown(KeyCode.J)){
+        else if(Input.GetKeyDown(KeyCode.J))
             attackKeyDown=Time.time;
-        }
         
         if(Input.GetKeyUp(KeyCode.I))//throw end charge
             throwKeyUp=true;

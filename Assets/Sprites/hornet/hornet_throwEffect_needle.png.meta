@@ -108,7 +108,70 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: nail_0
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 343
+        width: 281
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cabce804bb352404ca3b91731857f544
+      internalID: -355230198
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nail_1
+      rect:
+        serializedVersion: 2
+        x: 287
+        y: 343
+        width: 281
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 22fe67999b4ca9842848276e746cf047
+      internalID: 1094412838
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: nail_2
+      rect:
+        serializedVersion: 2
+        x: 572
+        y: 343
+        width: 281
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 055885b4d9fe71343ba90a117dfa2e6b
+      internalID: 887914885
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -119,7 +182,13 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      hornet_throwEffect_needle_3: 2073883398
+      hornet_throwEffect_needle_4: 379004588
+      hornet_throwEffect_needle_5: -1027905661
+      nail_0: -355230198
+      nail_1: 1094412838
+      nail_2: 887914885
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
