@@ -30,6 +30,7 @@ public class Pidle : PStateBase
         while(true){
             //switch to run
             if(player.inputx!=0) player.animator.SetTrigger("run");
+            Attack();
             //jump
             Jump();
             //dash

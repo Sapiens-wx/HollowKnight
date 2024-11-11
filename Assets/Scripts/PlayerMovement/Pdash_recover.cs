@@ -28,6 +28,7 @@ public class Pdash_recover : PStateBase
     IEnumerator m_FixedUpdate(){
         WaitForFixedUpdate wait=new WaitForFixedUpdate();
         while(true){
+            Attack();
             Movement();
             ApplyGravity();
             yield return wait;

@@ -27,6 +27,7 @@ public class Pjump_down : PStateBase
     IEnumerator m_FixedUpdate(){
         WaitForFixedUpdate wait=new WaitForFixedUpdate();
         while(true){
+            Attack();
             Movement();
             Dash();
             ApplyGravity();

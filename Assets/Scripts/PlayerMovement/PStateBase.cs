@@ -115,4 +115,14 @@ public class PStateBase : StateMachineBehaviour
             player.animator.SetTrigger("throw_charge");
         }
     }
+    internal void Attack(){
+        if(Time.time-player.attackKeyDown<=player.throwBufferTime){
+            player.attackKeyDown=-100;
+            if(!player.onGround && Input.GetKey(KeyCode.S))
+                player.swordAnimator.SetTrigger("down_slash");
+            else if(Input.GetKey(KeyCode.W))
+                player.swordAnimator.SetTrigger("up_slash");
+            else player.swordAnimator.SetTrigger("left_slash");
+        }
+    }
 }

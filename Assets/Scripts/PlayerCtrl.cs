@@ -27,6 +27,7 @@ public class PlayerCtrl : MonoBehaviour
     public float counterBufferTime;
     [Header("Attack")]
     public float downSlashJumpSpd;
+    public float attackBufferTime;
     [Header("Throw")]
     public float throwBufferTime;
     [Header("Ground Check")]
@@ -60,6 +61,7 @@ public class PlayerCtrl : MonoBehaviour
     [HideInInspector] public float throwKeyDown, throwChargeStartTime;
     [HideInInspector] public bool throwKeyUp;
     [HideInInspector] public bool attack_down; //whether is in attack_down state
+    [HideInInspector] public float attackKeyDown; //whether is in attack_down state
     public int Dir{
         get=>dir;
         set{
@@ -103,6 +105,7 @@ public class PlayerCtrl : MonoBehaviour
         counterKeyDown=-100;
         throwKeyDown=-100;
         dashKeyDown=-100;
+        attackKeyDown=-100;
         rgb=GetComponent<Rigidbody2D>();
         animator=GetComponent<Animator>();
         yspd=jumpHeight/jumpInterval-0.5f*gravity*jumpInterval;
@@ -124,8 +127,7 @@ public class PlayerCtrl : MonoBehaviour
         else if(Input.GetKeyUp(jumpKey))
             jumpKeyUp=true;
         else if(Input.GetKeyDown(KeyCode.J)){
-            if(!onGround) //down slash
-                swordAnimator.SetTrigger("down_slash");
+            attackKeyDown=Time.time;
         }
         
         if(Input.GetKeyUp(KeyCode.I))//throw end charge

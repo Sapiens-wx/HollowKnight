@@ -28,6 +28,7 @@ public class Prun : PStateBase
     IEnumerator m_FixedUpdate(){
         WaitForFixedUpdate wait=new WaitForFixedUpdate();
         while(true){
+            Attack();
             Movement();
             Jump();
             Dash();

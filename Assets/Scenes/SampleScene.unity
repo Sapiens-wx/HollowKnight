@@ -287,6 +287,7 @@ MonoBehaviour:
   - 0.16
   counterBufferTime: 0.08
   downSlashJumpSpd: 6
+  attackBufferTime: 0.08
   throwBufferTime: 0.08
   leftBot: {x: -0.29, y: -0.72}
   rightBot: {x: 0.29, y: -0.72}
@@ -318,6 +319,7 @@ MonoBehaviour:
   throwChargeStartTime: 0
   throwKeyUp: 0
   attack_down: 0
+  attackKeyDown: 0
 --- !u!4 &363549439
 Transform:
   m_ObjectHideFlags: 0
@@ -1150,7 +1152,7 @@ GameObject:
   - component: {fileID: 1099704006}
   m_Layer: 8
   m_Name: Sword
-  m_TagString: Untagged
+  m_TagString: hittable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1364,7 +1366,7 @@ GameObject:
   - component: {fileID: 1297827541}
   m_Layer: 8
   m_Name: Sword (1)
-  m_TagString: Untagged
+  m_TagString: hittable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1378,7 +1380,7 @@ Transform:
   m_GameObject: {fileID: 1297827539}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.2, y: 0, z: 0}
+  m_LocalPosition: {x: 3.93, y: 0, z: 0}
   m_LocalScale: {x: 0.1666, y: 1.5793, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2258,7 +2260,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
