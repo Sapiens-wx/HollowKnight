@@ -3,16 +3,20 @@ using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
 
-public class Pskill : PStateBase
+public class Pwall_jump_up : PStateBase
 {
-    Coroutine coro;
+    Coroutine coro, delayMoveCoro;
+    bool canMove;
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
+        canMove=false;
+        player.v.x=player.wallJumpXSpd;
+        player.v.y=player.yspd;
+
         coro = player.StartCoroutine(m_FixedUpdate());
-        player.v=Vector2.zero;
-        player.StartCoroutine(SkillThrow());
+        delayMoveCoro=player.StartCoroutine(DelayMovement());
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -26,26 +30,35 @@ public class Pskill : PStateBase
     {
         player.StopCoroutine(coro);
         coro=null;
+        if(delayMoveCoro!=null){
+            player.StopCoroutine(delayMoveCoro);
+            delayMoveCoro=null;
+        }
     }
     IEnumerator m_FixedUpdate(){
         WaitForFixedUpdate wait=new WaitForFixedUpdate();
         while(true){
+            if(canMove) Movement();
+            Jump();
+            Dash();
+            ApplyGravity();
+            CeilingCheck();
             yield return wait;
         }
     }
-    IEnumerator SkillThrow(){
-        RaycastHit2D hit = Physics2D.Raycast(player.transform.position, new Vector2(-player.Dir, 0), player.skillDist, 1<<7);
-        if(hit.collider==null){
-            yield return new WaitForSeconds(0.66666f);
-            yield break;
+    override internal void ApplyGravity(){
+        player.v.y+=player.gravity*Time.fixedDeltaTime;
+    }
+    override internal void Jump(){
+        if(player.v.y<=0 || player.jumpKeyUp){
+            player.jumpKeyUp=false;
+            player.v.y=0;
+            player.animator.SetTrigger("jump_down");
         }
-        yield return new WaitForSeconds(5*.0833333f);
-        NailBehav.inst.transform.position=hit.point;
-        NailBehav.inst.Show();
-        for(int i=2;i>-1;--i){
-            NailBehav.inst.SetSprite(i);
-            yield return new WaitForSeconds(.083333333f);
-        }
-        player.animator.SetTrigger("dashToNail");
+    }
+    IEnumerator DelayMovement(){
+        yield return new WaitForSeconds(player.wallJumpXSpdInterval);
+        canMove=true;
+        delayMoveCoro=null;
     }
 }

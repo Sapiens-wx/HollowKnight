@@ -32,6 +32,7 @@ public class Pjump_up : PStateBase
         WaitForFixedUpdate wait=new WaitForFixedUpdate();
         while(true){
             Attack();
+            Skill();
             Movement();
             Jump();
             Dash();

@@ -31,6 +31,7 @@ public class Pidle : PStateBase
             //switch to run
             if(player.inputx!=0) player.animator.SetTrigger("run");
             Attack();
+            Skill();
             //jump
             Jump();
             //dash
@@ -39,6 +40,9 @@ public class Pidle : PStateBase
             Counter();
             //throw
             Throw();
+            //wall
+            CheckWall();
+            ToWallIfOnWall();
             //apply gravity
             ApplyGravity();
             yield return wait;

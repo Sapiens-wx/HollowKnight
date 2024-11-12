@@ -264,14 +264,15 @@ MonoBehaviour:
   gravity: -25
   maxFallSpd: -10
   invincibleTime: 1
-  keyDownBuffTime: 0
+  keyDownBuffTime: 0.08
   xspd: 6
   jumpKey: 107
   jumpHeight: 2.8
   jumpInterval: 0.34
   coyoteTime: 0.1
   climbDist: -0.32
-  onWallYSpd: -1
+  wallCheckYPadding: 0.01
+  onWallYSpd: -3
   wallJumpXSpd: 6
   wallJumpXSpdInterval: 0.15
   dashDist: 2.3
@@ -285,10 +286,11 @@ MonoBehaviour:
   - 0.12
   - 0.12
   - 0.16
-  downSlashJumpSpd: 6
+  downSlashJumpSpd: 8
   throwNailOffset: {x: -0.17, y: -0.22}
   maxThrowChargeTime: 1
-  dashToNailSpd: 1
+  skillDist: 5
+  dashToNailSpd: 10
   leftBot: {x: -0.29, y: -0.72}
   rightBot: {x: 0.29, y: -0.72}
   groundLayer:
@@ -305,8 +307,8 @@ MonoBehaviour:
   prevOnGround: 0
   jumpKeyDown: 0
   jumpKeyUp: 0
-  climbTop: {x: -0.32, y: 0.37289026}
-  climbBot: {x: -0.32, y: -0.7168193}
+  climbTop: {x: -0.32, y: 0.36289027}
+  climbBot: {x: -0.32, y: -0.70681924}
   onWall: 0
   wallJumping: 0
   dashing: 0
@@ -501,7 +503,7 @@ GameObject:
   - component: {fileID: 556473489}
   - component: {fileID: 556473488}
   - component: {fileID: 556473487}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Collider (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -631,7 +633,7 @@ GameObject:
   - component: {fileID: 819635087}
   - component: {fileID: 819635086}
   - component: {fileID: 819635085}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Collider (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -761,7 +763,7 @@ GameObject:
   - component: {fileID: 884332957}
   - component: {fileID: 884332956}
   - component: {fileID: 884332955}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Collider (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1021,7 +1023,7 @@ GameObject:
   - component: {fileID: 946053232}
   - component: {fileID: 946053231}
   - component: {fileID: 946053230}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Collider (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1475,6 +1477,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxThrowDist: 4
   throwSpd: 8
+  sprites:
+  - {fileID: 887914885, guid: 13c41802c0f49944fa6b66fc1ffc32f6, type: 3}
+  - {fileID: 1094412838, guid: 13c41802c0f49944fa6b66fc1ffc32f6, type: 3}
+  - {fileID: -355230198, guid: 13c41802c0f49944fa6b66fc1ffc32f6, type: 3}
   hitType: 0
 --- !u!212 &1237740916
 SpriteRenderer:
@@ -1753,7 +1759,7 @@ GameObject:
   - component: {fileID: 1587477211}
   - component: {fileID: 1587477210}
   - component: {fileID: 1587477209}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Collider (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1991,7 +1997,7 @@ GameObject:
   - component: {fileID: 1692295814}
   - component: {fileID: 1692295813}
   - component: {fileID: 1692295812}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Collider (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2104,8 +2110,8 @@ Transform:
   m_GameObject: {fileID: 1692295811}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8.4174, y: -0.6731, z: 0}
-  m_LocalScale: {x: 0.25500622, y: 7.319454, z: 1}
+  m_LocalPosition: {x: -8.5029, y: -14.7843, z: 0}
+  m_LocalScale: {x: 0.08392255, y: 35.54251, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -2121,7 +2127,7 @@ GameObject:
   - component: {fileID: 1758802915}
   - component: {fileID: 1758802914}
   - component: {fileID: 1758802913}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2251,7 +2257,7 @@ GameObject:
   - component: {fileID: 1794676746}
   - component: {fileID: 1794676745}
   - component: {fileID: 1794676744}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Collider (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2364,8 +2370,8 @@ Transform:
   m_GameObject: {fileID: 1794676743}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -12.12, y: 2.4452, z: 0}
-  m_LocalScale: {x: 0.25500622, y: 13.556509, z: 1}
+  m_LocalPosition: {x: -12.12, y: -10.9647, z: 0}
+  m_LocalScale: {x: 0.25500622, y: 40.376705, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}

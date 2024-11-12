@@ -11,7 +11,7 @@ public class PdashToNail : PStateBase
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
         coro = player.StartCoroutine(m_FixedUpdate());
-        player.v.x=player.dashToNailSpd;
+        player.v.x=-player.dashToNailSpd*player.Dir;
         player.StartCoroutine(DashCounter());
     }
 
@@ -34,7 +34,7 @@ public class PdashToNail : PStateBase
         }
     }
     IEnumerator DashCounter(){
-        yield return new WaitForSeconds((NailBehav.inst.transform.position.x-player.transform.position.x)/player.dashToNailSpd);
+        yield return new WaitForSeconds(Mathf.Abs(NailBehav.inst.transform.position.x-player.transform.position.x)/player.dashToNailSpd);
         player.v.x=0;
         player.animator.SetTrigger("idle");
     }

@@ -67,36 +67,15 @@ public class PStateBase : StateMachineBehaviour
         }
     }
     virtual internal void Jump(){
-        if(Time.time-player.jumpKeyDown<=player.coyoteTime){
-            player.jumpKeyDown=-100;
-            if(player.onGround){ //ground jump
-                player.v.y=player.yspd;
-            } else if(player.onWall){ //wall jump
-                player.v.y=player.yspd;
-                player.v.x=player.dir*player.wallJumpXSpd;
-                player.wallJumpCoro = player.StartCoroutine(WallJumpCounter());
-            }
-        }
-        if(player.jumpKeyUp){
-            player.jumpKeyUp=false;
-            if(player.wallJumpCoro!=null){
-                player.StopCoroutine(player.wallJumpCoro);
-                player.wallJumpCoro=null;
-                player.wallJumping=false;
-            }
-            if(player.v.y>0){
-                player.v.y=0;
-			}
-        }
+        throw new System.Exception("Jump function not implemented");
     }
-    virtual internal void CheckWall(){
+    internal void CheckWall(){
         player.onWall = Physics2D.OverlapArea((Vector2)player.transform.position+player.climbBot, (Vector2)player.transform.position+player.climbTop, player.groundLayer);
     }
-    virtual internal IEnumerator WallJumpCounter(){
-        player.wallJumping=true;
-        yield return new WaitForSeconds(player.wallJumpXSpdInterval);
-        player.wallJumping=false;
-        player.wallJumpCoro=null;
+    internal virtual void ToWallIfOnWall(){
+        if(player.onWall && !player.onGround && player.inputx!=0){
+            player.animator.SetTrigger("wall");
+        }
     }
     internal IEnumerator InvincibleTimer(){
         yield return new WaitForSeconds(player.invincibleTime);
@@ -123,6 +102,12 @@ public class PStateBase : StateMachineBehaviour
             else if(Input.GetKey(KeyCode.W))
                 player.swordAnimator.SetTrigger("up_slash");
             else player.swordAnimator.SetTrigger("left_slash");
+        }
+    }
+    internal void Skill(){
+        if(Time.time-player.skillKeyDown<=player.keyDownBuffTime){
+            player.skillKeyDown=-100;
+            player.animator.SetTrigger("skill_throw");
         }
     }
 }
