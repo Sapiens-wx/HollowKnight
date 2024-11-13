@@ -35,6 +35,7 @@ public class PdashToNail : PStateBase
     }
     IEnumerator DashCounter(){
         yield return new WaitForSeconds(Mathf.Abs(NailBehav.inst.transform.position.x-player.transform.position.x)/player.dashToNailSpd);
+        NailBehav.inst.Hide();
         player.v.x=0;
         player.animator.SetTrigger("idle");
     }
