@@ -38,6 +38,7 @@ public class Pwall_jump_up : PStateBase
     IEnumerator m_FixedUpdate(){
         WaitForFixedUpdate wait=new WaitForFixedUpdate();
         while(true){
+            Attack();
             if(canMove) Movement();
             Jump();
             Dash();
