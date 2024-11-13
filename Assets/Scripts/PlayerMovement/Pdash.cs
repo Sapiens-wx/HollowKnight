@@ -12,7 +12,11 @@ public class Pdash : PStateBase
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
         animator.ResetTrigger("dash_recover");
-        if(player.inputx!=0 && player.inputx==player.Dir) //change direction of dash
+        if(player.dashDir!=0){
+            player.Dir=player.dashDir;
+            player.dashDir=0;
+        }
+        else if(player.inputx==player.Dir) //change direction of dash
             player.Dir=-player.inputx;
         coro = player.StartCoroutine(m_FixedUpdate());
         dashCoro = player.StartCoroutine(DashAnim());

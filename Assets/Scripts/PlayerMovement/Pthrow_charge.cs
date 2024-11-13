@@ -30,7 +30,9 @@ public class Pthrow_charge : PStateBase
         while(true){
             if(player.throwKeyUp){
                 player.throwKeyUp=false;
-                player.throwChargeStartTime=Time.time-player.throwChargeStartTime;
+                player.throwChargeTime=Time.time-player.throwChargeTime;
+                if(player.throwChargeTime>player.maxThrowChargeTime)
+                    player.throwChargeTime=player.maxThrowChargeTime;
                 player.animator.SetTrigger("throw");
             }
             yield return wait;

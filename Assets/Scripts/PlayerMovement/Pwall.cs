@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
 
-public class Pjump_down : PStateBase
+public class Pwall : PStateBase
 {
     Coroutine coro;
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
@@ -11,11 +11,14 @@ public class Pjump_down : PStateBase
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
         coro = player.StartCoroutine(m_FixedUpdate());
+        player.v.x=0;
+        player.canDash=true;
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     //override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     //{
+    //    
     //}
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
@@ -27,22 +30,40 @@ public class Pjump_down : PStateBase
     IEnumerator m_FixedUpdate(){
         WaitForFixedUpdate wait=new WaitForFixedUpdate();
         while(true){
-            Attack();
-            Skill();
-            Movement();
-            Dash();
             CheckWall();
-            ToWallIfOnWall();
+            Jump();
+            Dash();
             ApplyGravity();
             yield return wait;
         }
     }
-    override internal void ApplyGravity(){
-        if(player.onGround && player.v.y<0){
-            player.v.y=0;
-            player.animator.SetTrigger("idle");
+    internal override void Jump(){
+        if(!player.onWall){
+            player.animator.SetTrigger(player.onGround?"idle":"jump_down");
         }
-        else if(player.v.y>=player.maxFallSpd)
-            player.v.y+=player.gravity*Time.fixedDeltaTime;
+        else if(player.onGround)
+            player.animator.SetTrigger("idle");
+        else if(Time.time-player.jumpKeyDown<=player.coyoteTime){
+            player.jumpKeyDown=-100;
+            player.jumpKeyUp=false;
+            player.animator.SetTrigger("wall_jump_up");
+        } else if(player.inputx==player.Dir){ // off the wall
+            player.Dir=-player.inputx;
+            player.animator.SetTrigger("jump_down");
+        }
+    }
+    internal override void ApplyGravity(){
+        player.v.y=player.onWallYSpd;
+    }
+    internal override void Dash()
+    {
+        if(Time.time-player.dashKeyDown<=player.keyDownBuffTime){
+            player.dashKeyDown=-100;
+            if(player.canDash){
+                player.canDash=false;
+                player.dashDir=-player.Dir; //explicitly set dash direction
+                player.animator.SetTrigger("dash");
+            }
+        }
     }
 }

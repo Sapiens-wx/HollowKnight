@@ -29,11 +29,14 @@ public class Prun : PStateBase
         WaitForFixedUpdate wait=new WaitForFixedUpdate();
         while(true){
             Attack();
+            Skill();
             Movement();
             Jump();
             Dash();
             Counter();
             Throw();
+            CheckWall();
+            ToWallIfOnWall();
             ApplyGravity();
             yield return wait;
         }

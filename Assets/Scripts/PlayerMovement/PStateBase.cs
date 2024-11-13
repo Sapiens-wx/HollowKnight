@@ -40,7 +40,7 @@ public class PStateBase : StateMachineBehaviour
     }
     virtual internal void Dash(){
         //dash
-        if(Time.time-player.dashKeyDown<=player.dashBuffTime){
+        if(Time.time-player.dashKeyDown<=player.keyDownBuffTime){
             player.dashKeyDown=-100;
             if(player.canDash){
                 player.canDash=false;
@@ -67,62 +67,47 @@ public class PStateBase : StateMachineBehaviour
         }
     }
     virtual internal void Jump(){
-        if(Time.time-player.jumpKeyDown<=player.coyoteTime){
-            player.jumpKeyDown=-100;
-            if(player.onGround){ //ground jump
-                player.v.y=player.yspd;
-            } else if(player.onWall){ //wall jump
-                player.v.y=player.yspd;
-                player.v.x=player.dir*player.wallJumpXSpd;
-                player.wallJumpCoro = player.StartCoroutine(WallJumpCounter());
-            }
-        }
-        if(player.jumpKeyUp){
-            player.jumpKeyUp=false;
-            if(player.wallJumpCoro!=null){
-                player.StopCoroutine(player.wallJumpCoro);
-                player.wallJumpCoro=null;
-                player.wallJumping=false;
-            }
-            if(player.v.y>0){
-                player.v.y=0;
-			}
-        }
+        throw new System.Exception("Jump function not implemented");
     }
-    virtual internal void CheckWall(){
+    internal void CheckWall(){
         player.onWall = Physics2D.OverlapArea((Vector2)player.transform.position+player.climbBot, (Vector2)player.transform.position+player.climbTop, player.groundLayer);
     }
-    virtual internal IEnumerator WallJumpCounter(){
-        player.wallJumping=true;
-        yield return new WaitForSeconds(player.wallJumpXSpdInterval);
-        player.wallJumping=false;
-        player.wallJumpCoro=null;
+    internal virtual void ToWallIfOnWall(){
+        if(player.onWall && !player.onGround && player.inputx!=0){
+            player.animator.SetTrigger("wall");
+        }
     }
     internal IEnumerator InvincibleTimer(){
         yield return new WaitForSeconds(player.invincibleTime);
         player.hittable=true;
     }
     internal void Counter(){
-        if(player.onGround && Time.time-player.counterKeyDown<=player.counterBufferTime){
+        if(player.onGround && Time.time-player.counterKeyDown<=player.keyDownBuffTime){
             player.counterKeyDown=-100;
             player.animator.SetTrigger("counter");
         }
     }
     internal void Throw(){
-        if(Time.time-player.throwKeyDown<=player.throwBufferTime){
-            player.throwChargeStartTime=player.throwKeyDown;
+        if(Time.time-player.throwKeyDown<=player.keyDownBuffTime){
+            player.throwChargeTime=player.throwKeyDown;
             player.throwKeyDown=-100;
             player.animator.SetTrigger("throw_charge");
         }
     }
     internal void Attack(){
-        if(Time.time-player.attackKeyDown<=player.throwBufferTime){
+        if(Time.time-player.attackKeyDown<=player.keyDownBuffTime){
             player.attackKeyDown=-100;
             if(!player.onGround && Input.GetKey(KeyCode.S))
                 player.swordAnimator.SetTrigger("down_slash");
             else if(Input.GetKey(KeyCode.W))
                 player.swordAnimator.SetTrigger("up_slash");
             else player.swordAnimator.SetTrigger("left_slash");
+        }
+    }
+    internal void Skill(){
+        if(Time.time-player.skillKeyDown<=player.keyDownBuffTime){
+            player.skillKeyDown=-100;
+            player.animator.SetTrigger("skill_throw");
         }
     }
 }
