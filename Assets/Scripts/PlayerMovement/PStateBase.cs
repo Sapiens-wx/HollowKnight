@@ -40,7 +40,8 @@ public class PStateBase : StateMachineBehaviour
     }
     virtual internal void Dash(){
         //dash
-        if(Time.time-player.dashKeyDown<=player.keyDownBuffTime){
+        if(Time.time-player.dashKeyDown<=player.keyDownBuffTime && player.dashKeyDown+player.keyDownBuffTime>player.allowDashTime){
+            player.allowDashTime=Time.time+player.dashInterval;
             player.dashKeyDown=-100;
             if(player.canDash){
                 player.canDash=false;
