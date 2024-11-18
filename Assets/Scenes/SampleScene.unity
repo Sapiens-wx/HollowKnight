@@ -310,10 +310,10 @@ MonoBehaviour:
   climbTop: {x: -0.32, y: 0.36289027}
   climbBot: {x: -0.32, y: -0.70681924}
   onWall: 0
-  wallJumping: 0
   dashing: 0
   canDash: 0
   dashKeyDown: 0
+  dashDir: 0
   yspd: 0
   dir: 0
   counterKeyDown: 0
