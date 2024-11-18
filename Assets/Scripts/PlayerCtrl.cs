@@ -24,6 +24,7 @@ public class PlayerCtrl : MonoBehaviour
     [Header("Dash")]
     public float dashDist;
     public float[] dashPercents;
+    public float dashInterval;
     [Header("Attack")]
     public float downSlashJumpSpd;
     [Header("Throw")]
@@ -55,7 +56,7 @@ public class PlayerCtrl : MonoBehaviour
     [HideInInspector] public Vector2 climbTop, climbBot;
     [HideInInspector] public bool onWall;
     [HideInInspector] public bool dashing, canDash;
-    [HideInInspector] public float dashKeyDown;
+    [HideInInspector] public float dashKeyDown, allowDashTime;
     [HideInInspector] public int dashDir;
     [HideInInspector] public float yspd;
     [HideInInspector] public int dir;
@@ -115,6 +116,9 @@ public class PlayerCtrl : MonoBehaviour
         dashKeyDown=-100;
         attackKeyDown=-100;
         skillKeyDown=-100;
+
+        allowDashTime=0;
+
         rgb=GetComponent<Rigidbody2D>();
         animator=GetComponent<Animator>();
         yspd=jumpHeight/jumpInterval-0.5f*gravity*jumpInterval;
@@ -157,11 +161,6 @@ public class PlayerCtrl : MonoBehaviour
     #region hit
     void OnTriggerStay2D(Collider2D collider){
         if(hittable && collider.gameObject.layer==8){ //if is enemy
-            animator.SetTrigger("hit");
-        }
-    }
-    void OnCollisionEnter2D(Collision2D collision){
-        if(hittable && collision.collider.gameObject.layer==8){ //if is enemy
             animator.SetTrigger("hit");
         }
     }

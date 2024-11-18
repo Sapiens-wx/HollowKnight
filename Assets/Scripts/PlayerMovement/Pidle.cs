@@ -22,8 +22,10 @@ public class Pidle : PStateBase
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        player.StopCoroutine(coro);
-        coro=null;
+        if (coro != null) {
+            player.StopCoroutine(coro);
+            coro=null;
+        }
     }
     IEnumerator m_FixedUpdate(){
         WaitForFixedUpdate wait=new WaitForFixedUpdate();
