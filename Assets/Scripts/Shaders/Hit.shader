@@ -3,7 +3,6 @@ Shader "Unlit/Hit"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
-        _Color ("Color", Color) = (1,1,1,1)
         _whiteAmount ("White Amount", Float) = 0
     }
     SubShader
@@ -41,7 +40,6 @@ Shader "Unlit/Hit"
             float4 _MainTex_ST;
 
             float _whiteAmount;
-            fixed4 _Color;
 
             v2f vert (appdata v)
             {
@@ -55,7 +53,8 @@ Shader "Unlit/Hit"
             {
                 // sample the texture
                 fixed4 col = tex2D(_MainTex, i.uv);
-                col.xyz=lerp(col.xyz, fixed3(1,1,1), _Color.x);
+                fixed b=step(0.5, _whiteAmount);
+                col.xyz=lerp(col.xyz, fixed3(b,b,b), 2*abs(_whiteAmount-0.5));
                 return col;
             }
             ENDCG

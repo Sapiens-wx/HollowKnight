@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class PStateBase : StateMachineBehaviour
 {
@@ -79,8 +80,13 @@ public class PStateBase : StateMachineBehaviour
         }
     }
     internal IEnumerator InvincibleTimer(){
+        player.hitAnim.Restart();
         yield return new WaitForSeconds(player.invincibleTime);
         player.hittable=true;
+        player.hitAnim.Pause();
+        player.spr.GetPropertyBlock(player.matPB);
+        player.matPB.SetFloat("_whiteAmount",.5f);
+        player.spr.SetPropertyBlock(player.matPB);
     }
     internal void Counter(){
         if(player.onGround && Time.time-player.counterKeyDown<=player.keyDownBuffTime){

@@ -1,12 +1,13 @@
 using System.Collections;
+using DG.Tweening;
 using UnityEngine;
 
 public class PlayerCtrl : MonoBehaviour
 {
     public Animator swordAnimator;
     public BoxCollider2D bc;
+    public SpriteRenderer spr;
     public float gravity, maxFallSpd;
-    public float invincibleTime;
     public float keyDownBuffTime;
     [Header("Movement")]
     public float xspd;
@@ -40,6 +41,9 @@ public class PlayerCtrl : MonoBehaviour
     [Header("Ceiling Check")]
     public Vector2 leftTop;
     public Vector2 rightTop;
+    [Header("Hit")]
+    public float invincibleTime;
+    public float hitAnimDuration, hitAnimDuration2;
 
     [HideInInspector] public Rigidbody2D rgb;
     [HideInInspector] public Animator animator;
@@ -66,6 +70,8 @@ public class PlayerCtrl : MonoBehaviour
     [HideInInspector] public bool attack_down; //whether is in attack_down state
     [HideInInspector] public float attackKeyDown; //whether is in attack_down state
     [HideInInspector] public float skillKeyDown; 
+    [HideInInspector] public MaterialPropertyBlock matPB;
+    [HideInInspector] public Sequence hitAnim;
     public int Dir{
         get=>dir;
         set{
@@ -122,6 +128,26 @@ public class PlayerCtrl : MonoBehaviour
         rgb=GetComponent<Rigidbody2D>();
         animator=GetComponent<Animator>();
         yspd=jumpHeight/jumpInterval-0.5f*gravity*jumpInterval;
+
+        //hit animation
+        matPB=new MaterialPropertyBlock();
+        spr.GetPropertyBlock(matPB);
+        matPB.SetFloat("_whiteAmount", .5f);
+        spr.SetPropertyBlock(matPB);
+
+        hitAnim=DOTween.Sequence();
+        hitAnim.SetAutoKill(false);
+        hitAnim.Append(DOTween.To(()=>matPB.GetFloat("_whiteAmount"),(val)=>{
+            spr.GetPropertyBlock(matPB);
+            matPB.SetFloat("_whiteAmount",val);
+            spr.SetPropertyBlock(matPB);
+        }, 1, hitAnimDuration).SetLoops(2, LoopType.Yoyo));
+        hitAnim.Append(DOTween.To(()=>matPB.GetFloat("_whiteAmount"), (val)=>{
+            spr.GetPropertyBlock(matPB);
+            matPB.SetFloat("_whiteAmount",val);
+            spr.SetPropertyBlock(matPB);
+        }, 0, hitAnimDuration2).SetLoops(100, LoopType.Yoyo).SetEase(Ease.InOutQuad));
+        hitAnim.Pause();
     }
 
     // Update is called once per frame
@@ -160,8 +186,9 @@ public class PlayerCtrl : MonoBehaviour
     }
     #region hit
     void OnTriggerStay2D(Collider2D collider){
-        if(hittable && collider.gameObject.layer==8){ //if is enemy
+        if(hittable && GameManager.IsLayer(GameManager.inst.enemyLayer, collider.gameObject.layer)){ //if is enemy
             animator.SetTrigger("hit");
+            hitAnim.Restart();
         }
     }
     #endregion

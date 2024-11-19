@@ -43,14 +43,14 @@ public class FKidle : FKStateBase
                     knight.canJumpAndAttack = true;
                     knight.jumpToX = GetBackwardJumpPos(distToX);
                     knight.animator.SetTrigger("jump");
-                    Debug.Log("jump backward");
+                    //Debug.Log("jump backward");
                     break;
                 //jump, must attack
                 case 1:
                     knight.canJumpAndAttack = false;
                     knight.jumpToX = knight.transform.position.x;
                     knight.animator.SetTrigger("jump_attack");
-                    Debug.Log("jump here");
+                    //Debug.Log("jump here");
                     break;
                 //forward jump
                 case 2:
@@ -58,7 +58,7 @@ public class FKidle : FKStateBase
                     knight.canJumpAndAttack = false;
                     knight.jumpToX = GetForwardJumpPos(distToX);
                     knight.animator.SetTrigger(Random.Range(0, 2) == 0 ? "jump" : "jump_attack");
-                    Debug.Log("jump forward");
+                    //Debug.Log("jump forward");
                     break;
             }
         }
@@ -67,14 +67,14 @@ public class FKidle : FKStateBase
     float GetForwardJumpPos(float distToPlayer)
     {
         //far from player, should jump closer to the player.
-        if (knight.dir == 1) //left side
+        if (knight.Dir == -1) //left side
             return Random.Range(Mathf.Max(knight.leftx, PlayerCtrl.inst.transform.position.x - knight.closeToPlayerLimit), Mathf.Min(knight.rightx, PlayerCtrl.inst.transform.position.x + knight.closeToPlayerLimit));
         else //right side
             return Random.Range(Mathf.Max(knight.leftx, PlayerCtrl.inst.transform.position.x - knight.closeToPlayerLimit), Mathf.Min(knight.rightx, PlayerCtrl.inst.transform.position.x + knight.closeToPlayerLimit));
     }
     float GetBackwardJumpPos(float distToPlayer)
     {
-        if (knight.dir == 1) { //jump to left
+        if (knight.Dir == -1) { //jump to left
             float rightX = PlayerCtrl.inst.transform.position.x - knight.closeToPlayerLimit;
             if (rightX < knight.leftx)
                 rightX = PlayerCtrl.inst.transform.position.x;
@@ -89,7 +89,7 @@ public class FKidle : FKStateBase
     IEnumerator m_FixedUpdate(){
         WaitForFixedUpdate wait=new WaitForFixedUpdate();
         while(true){
-            if (Mathf.Sign(PlayerCtrl.inst.transform.position.x - knight.transform.position.x) != knight.dir)
+            if (Mathf.Sign(PlayerCtrl.inst.transform.position.x - knight.transform.position.x) != knight.Dir)
                 knight.animator.SetTrigger("turn");
             yield return wait;
         }

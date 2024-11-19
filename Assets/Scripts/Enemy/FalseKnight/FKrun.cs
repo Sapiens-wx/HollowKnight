@@ -11,7 +11,7 @@ public class FK : FKStateBase
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
         coro = knight.StartCoroutine(m_FixedUpdate());
-        knight.rgb.velocity = new Vector2(knight.dir == 1 ? knight.runSpd : -knight.runSpd, knight.rgb.velocity.y);
+        knight.rgb.velocity = new Vector2(knight.Dir == 1 ? knight.runSpd : -knight.runSpd, knight.rgb.velocity.y);
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks

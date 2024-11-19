@@ -6,29 +6,51 @@ using DG.Tweening;
 public class EnemyBase : MonoBehaviour
 {
     [SerializeField] internal int maxHealth;
-    [SerializeField] internal Animator animator;
+    [Header("Hit Anim")]
     [SerializeField] float hitAnimDuration;
     [SerializeField] SpriteRenderer spr;
-    [SerializeField] Material material;
+    [Header("Ground Check")]
     MaterialPropertyBlock matPB;
 
+    [HideInInspector] public Animator animator;
+    [HideInInspector] public Rigidbody2D rgb;
+    [HideInInspector] public Collider2D bc;
+    int dir;
+    public int Dir{
+        get=>dir;
+        set{
+            dir=value;
+            if(dir==1)
+                transform.localScale=new Vector3(Mathf.Abs(transform.localScale.x),transform.localScale.y, transform.localScale.z);
+            else
+                transform.localScale=new Vector3(-Mathf.Abs(transform.localScale.x),transform.localScale.y, transform.localScale.z);
+        }
+    }
     internal int curHealth;
+    //ground check
+    [HideInInspector] public bool onGround, prevOnGround;
 
     Sequence s;
     internal virtual void Start(){
+        Dir=1;
+
+        animator=GetComponent<Animator>();
+        rgb=GetComponent<Rigidbody2D>();
+        bc=GetComponent<Collider2D>();
+
         curHealth=maxHealth;
         matPB=new MaterialPropertyBlock();
         spr.GetPropertyBlock(matPB);
-        matPB.SetColor("_Color", Color.black);
+        matPB.SetFloat("_whiteAmount", .5f);
         spr.SetPropertyBlock(matPB);
 
         s=DOTween.Sequence();
         s.SetAutoKill(false);
-        s.Append(DOTween.To(()=>matPB.GetColor("_Color"),(val)=>{
+        s.Append(DOTween.To(()=>matPB.GetFloat("_whiteAmount"),(val)=>{
             spr.GetPropertyBlock(matPB);
-            matPB.SetColor("_Color",val);
+            matPB.SetFloat("_whiteAmount",val);
             spr.SetPropertyBlock(matPB);
-        }, Color.white, hitAnimDuration).SetLoops(2, LoopType.Yoyo));
+        }, 1, hitAnimDuration).SetLoops(2, LoopType.Yoyo));
         s.Pause();
     }
     public virtual void Hit(int damage){
@@ -38,9 +60,18 @@ public class EnemyBase : MonoBehaviour
         }
     }
     void OnTriggerEnter2D(Collider2D collider){
-        if(collider.gameObject.layer==9){ //if is sword layer
+        if(GameManager.IsLayer(GameManager.inst.playerSwordLayer, collider.gameObject.layer)){ //if is sword layer
             Hit(1);
             s.Restart();
         }
+    }
+    internal void CheckOnGround(){
+        prevOnGround=onGround;
+        Bounds bounds=bc.bounds;
+        Vector2 leftBot=bounds.min;
+        Vector2 rightBot=leftBot;
+        rightBot.x+=bounds.size.x*.9f;
+        leftBot.x+=bounds.size.x*.1f;
+        onGround = Physics2D.OverlapArea(leftBot,rightBot,GameManager.inst.groundLayer);
     }
 }
