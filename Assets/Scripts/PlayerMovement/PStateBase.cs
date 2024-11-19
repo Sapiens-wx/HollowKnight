@@ -108,7 +108,7 @@ public class PStateBase : StateMachineBehaviour
                 player.swordAnimator.SetTrigger("down_slash");
             else if(Input.GetKey(KeyCode.W))
                 player.swordAnimator.SetTrigger("up_slash");
-            else player.swordAnimator.SetTrigger("left_slash");
+            else player.animator.SetTrigger("attack_horizontal");
         }
     }
     internal void Skill(){
