@@ -43,7 +43,7 @@ public class PlayerCtrl : MonoBehaviour
     public Vector2 rightTop;
     [Header("Hit")]
     public float invincibleTime;
-    public float hitAnimDuration, hitAnimDuration2;
+    public float hitAnimDuration, counterAnimDuration;
 
     [HideInInspector] public Rigidbody2D rgb;
     [HideInInspector] public Animator animator;
@@ -71,7 +71,7 @@ public class PlayerCtrl : MonoBehaviour
     [HideInInspector] public float attackKeyDown; //whether is in attack_down state
     [HideInInspector] public float skillKeyDown; 
     [HideInInspector] public MaterialPropertyBlock matPB;
-    [HideInInspector] public Sequence hitAnim;
+    [HideInInspector] public Sequence hitAnim, counterAnim;
     public int Dir{
         get=>dir;
         set{
@@ -137,17 +137,32 @@ public class PlayerCtrl : MonoBehaviour
 
         hitAnim=DOTween.Sequence();
         hitAnim.SetAutoKill(false);
-        hitAnim.Append(DOTween.To(()=>matPB.GetFloat("_whiteAmount"),(val)=>{
-            spr.GetPropertyBlock(matPB);
-            matPB.SetFloat("_whiteAmount",val);
-            spr.SetPropertyBlock(matPB);
-        }, 1, hitAnimDuration).SetLoops(2, LoopType.Yoyo));
         hitAnim.Append(DOTween.To(()=>matPB.GetFloat("_whiteAmount"), (val)=>{
             spr.GetPropertyBlock(matPB);
             matPB.SetFloat("_whiteAmount",val);
             spr.SetPropertyBlock(matPB);
-        }, 0, hitAnimDuration2).SetLoops(100, LoopType.Yoyo).SetEase(Ease.InOutQuad));
+        }, 0, hitAnimDuration).SetLoops(100, LoopType.Yoyo).SetEase(Ease.InOutQuad));
         hitAnim.Pause();
+
+        //counter animation
+        counterAnim=DOTween.Sequence();
+        counterAnim.SetAutoKill(false);
+        counterAnim.Append(DOTween.To(()=>matPB.GetFloat("_whiteAmount"), (val)=>{
+            spr.GetPropertyBlock(matPB);
+            matPB.SetFloat("_whiteAmount",val);
+            spr.SetPropertyBlock(matPB);
+        }, 1, counterAnimDuration));
+        counterAnim.AppendCallback(()=>{
+            Time.timeScale=.1f;
+        });
+        counterAnim.AppendInterval(.035f);
+        counterAnim.AppendCallback(()=>Time.timeScale=1);
+        counterAnim.Append(DOTween.To(()=>matPB.GetFloat("_whiteAmount"), (val)=>{
+            spr.GetPropertyBlock(matPB);
+            matPB.SetFloat("_whiteAmount",val);
+            spr.SetPropertyBlock(matPB);
+        }, .5f, counterAnimDuration));
+        counterAnim.Pause();
     }
 
     // Update is called once per frame
@@ -188,7 +203,6 @@ public class PlayerCtrl : MonoBehaviour
     void OnTriggerStay2D(Collider2D collider){
         if(hittable && GameManager.IsLayer(GameManager.inst.enemyLayer, collider.gameObject.layer)){ //if is enemy
             animator.SetTrigger("hit");
-            hitAnim.Restart();
         }
     }
     #endregion
