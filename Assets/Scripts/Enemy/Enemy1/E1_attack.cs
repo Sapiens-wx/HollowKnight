@@ -33,7 +33,6 @@ public class E1_attack : E1StateBase
         WaitForFixedUpdate wait=new WaitForFixedUpdate();
         while(true){
             if(Time.time>=attackToTime){
-                Debug.Log($"now={Time.time}, attackToTime={attackToTime}");
                 enemy.animator.SetTrigger("idle");
             }
             yield return wait;

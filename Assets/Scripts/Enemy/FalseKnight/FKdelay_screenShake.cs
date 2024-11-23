@@ -25,6 +25,6 @@ public class FKdelay_screenShake : FKStateBase
     }
     IEnumerator DelayScreenShake(){
         yield return new WaitForSeconds(delayAmount);
-        CameraCtrl.inst.StartCoroutine(CameraCtrl.inst.ScreenShake());
+        CameraCtrl.inst.ScreenShakeCM();
     }
 }

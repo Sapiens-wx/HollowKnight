@@ -16,6 +16,7 @@ public class EnemyBase : MonoBehaviour
     [HideInInspector] public Rigidbody2D rgb;
     [HideInInspector] public Collider2D bc;
     int dir;
+    float hitTime;
     public int Dir{
         get=>dir;
         set{
@@ -32,6 +33,7 @@ public class EnemyBase : MonoBehaviour
 
     Sequence s;
     internal virtual void Start(){
+        hitTime=-100;
         Dir=1;
 
         animator=GetComponent<Animator>();
@@ -58,9 +60,11 @@ public class EnemyBase : MonoBehaviour
         if (curHealth < 0) {
             animator.SetTrigger("die");
         }
+        Debug.Log("Hit "+Time.time);
     }
     void OnTriggerEnter2D(Collider2D collider){
-        if(GameManager.IsLayer(GameManager.inst.playerSwordLayer, collider.gameObject.layer)){ //if is sword layer
+        if(GameManager.IsLayer(GameManager.inst.playerSwordLayer, collider.gameObject.layer) && Time.time-.23f>hitTime){ //if is sword layer
+            hitTime=Time.time;
             Hit(1);
             s.Restart();
         }

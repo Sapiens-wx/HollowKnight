@@ -44,6 +44,7 @@ public class PlayerCtrl : MonoBehaviour
     [Header("Hit")]
     public float invincibleTime;
     public float hitAnimDuration, counterAnimDuration;
+    public float timeStopInterval;
 
     [HideInInspector] public Rigidbody2D rgb;
     [HideInInspector] public Animator animator;
@@ -71,7 +72,7 @@ public class PlayerCtrl : MonoBehaviour
     [HideInInspector] public float attackKeyDown; //whether is in attack_down state
     [HideInInspector] public float skillKeyDown; 
     [HideInInspector] public MaterialPropertyBlock matPB;
-    [HideInInspector] public Sequence hitAnim, counterAnim;
+    [HideInInspector] public Sequence hitAnim, counterAnim, invincibleAnim;
     public int Dir{
         get=>dir;
         set{
@@ -135,28 +136,56 @@ public class PlayerCtrl : MonoBehaviour
         matPB.SetFloat("_whiteAmount", .5f);
         spr.SetPropertyBlock(matPB);
 
+        //invincible anim
+        invincibleAnim=DOTween.Sequence();
+        invincibleAnim.SetAutoKill(false);
+        invincibleAnim.AppendCallback(()=>{
+            hittable=false;
+        });
+        invincibleAnim.Append(DOTween.To(()=>matPB.GetFloat("_whiteAmount"), (val)=>{
+            spr.GetPropertyBlock(matPB);
+            matPB.SetFloat("_whiteAmount",val);
+            spr.SetPropertyBlock(matPB);
+        }, 0, hitAnimDuration).SetLoops(Mathf.RoundToInt(invincibleTime/hitAnimDuration), LoopType.Yoyo).SetEase(Ease.InOutQuad));
+        invincibleAnim.AppendCallback(()=>{
+            hittable=true;
+            spr.GetPropertyBlock(matPB);
+            matPB.SetFloat("_whiteAmount",.5f);
+            spr.SetPropertyBlock(matPB);
+        });
+        invincibleAnim.Pause();
+
         hitAnim=DOTween.Sequence();
         hitAnim.SetAutoKill(false);
+        hitAnim.AppendCallback(()=>{
+            spr.GetPropertyBlock(matPB);
+            matPB.SetFloat("_whiteAmount",0);
+            spr.SetPropertyBlock(matPB);
+            hittable=false;
+        });
+        //hitAnim.AppendCallback(()=>StartCoroutine(PauseForSeconds(.5f)));
+        hitAnim.AppendInterval(0.01f);
         hitAnim.Append(DOTween.To(()=>matPB.GetFloat("_whiteAmount"), (val)=>{
             spr.GetPropertyBlock(matPB);
             matPB.SetFloat("_whiteAmount",val);
             spr.SetPropertyBlock(matPB);
-        }, 0, hitAnimDuration).SetLoops(100, LoopType.Yoyo).SetEase(Ease.InOutQuad));
+        }, .5f, counterAnimDuration));
+        hitAnim.AppendCallback(()=>invincibleAnim.Restart());
         hitAnim.Pause();
 
         //counter animation
         counterAnim=DOTween.Sequence();
         counterAnim.SetAutoKill(false);
-        counterAnim.Append(DOTween.To(()=>matPB.GetFloat("_whiteAmount"), (val)=>{
-            spr.GetPropertyBlock(matPB);
-            matPB.SetFloat("_whiteAmount",val);
-            spr.SetPropertyBlock(matPB);
-        }, 1, counterAnimDuration));
         counterAnim.AppendCallback(()=>{
-            Time.timeScale=.1f;
+            spr.GetPropertyBlock(matPB);
+            matPB.SetFloat("_whiteAmount",1);
+            spr.SetPropertyBlock(matPB);
+            CameraCtrl.inst.ScreenShakeCM();
+            //Time.timeScale=.1f;
         });
-        counterAnim.AppendInterval(.035f);
-        counterAnim.AppendCallback(()=>Time.timeScale=1);
+        counterAnim.AppendCallback(()=>StartCoroutine(PauseForSeconds(timeStopInterval)));
+        counterAnim.AppendInterval(.01f);
+        //counterAnim.AppendCallback(()=>Time.timeScale=1);
         counterAnim.Append(DOTween.To(()=>matPB.GetFloat("_whiteAmount"), (val)=>{
             spr.GetPropertyBlock(matPB);
             matPB.SetFloat("_whiteAmount",val);
@@ -220,5 +249,10 @@ public class PlayerCtrl : MonoBehaviour
     }
     void CheckWall(){
         onWall = Physics2D.OverlapArea((Vector2)transform.position+climbBot, (Vector2)transform.position+climbTop, groundLayer);
+    }
+    IEnumerator PauseForSeconds(float sec){
+        Time.timeScale=0;
+        yield return new WaitForSecondsRealtime(sec);
+        Time.timeScale=1;
     }
 }

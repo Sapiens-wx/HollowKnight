@@ -2,12 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using Cinemachine;
+using System;
 
 public class CameraCtrl : MonoBehaviour
 {
     [SerializeField] float limitx,limity;
     [SerializeField] float lerpAmount;
     [Header("Screen Shake")]
+    [SerializeField] CinemachineImpulseSource impulseSrc;
     [SerializeField] float shakeAmount;
     [SerializeField] float shakeInterval;
 
@@ -26,10 +29,14 @@ public class CameraCtrl : MonoBehaviour
     }
 
     void FixedUpdate(){
-        camPos.x=Mathf.Lerp(transform.position.x, PlayerCtrl.inst.transform.position.x-limitx*PlayerCtrl.inst.Dir, lerpAmount);
-        camPos.y=Mathf.Lerp(transform.position.y, PlayerCtrl.inst.transform.position.y, lerpAmount);
-        transform.position=camPos;
+        //camPos.x=Mathf.Lerp(transform.position.x, PlayerCtrl.inst.transform.position.x-limitx*PlayerCtrl.inst.Dir, lerpAmount);
+        //camPos.y=Mathf.Lerp(transform.position.y, PlayerCtrl.inst.transform.position.y, lerpAmount);
+        //transform.position=camPos;
     }
+    public void ScreenShakeCM(){
+        impulseSrc.GenerateImpulse(Vector2.one);
+    }
+    [Obsolete]
     public IEnumerator ScreenShake(){
         WaitForFixedUpdate wait=new WaitForFixedUpdate();
         float t=0;

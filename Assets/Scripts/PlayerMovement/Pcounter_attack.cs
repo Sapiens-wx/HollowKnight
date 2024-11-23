@@ -11,8 +11,10 @@ public class Pcounter_attack : PStateBase
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
+        player.v.x=0;
         coro = player.StartCoroutine(m_FixedUpdate());
         player.counterAnim.Restart();
+        player.hittable=false;
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -26,6 +28,7 @@ public class Pcounter_attack : PStateBase
     {
         player.StopCoroutine(coro);
         coro=null;
+        player.invincibleAnim.Restart();
     }
     IEnumerator m_FixedUpdate(){
         WaitForFixedUpdate wait=new WaitForFixedUpdate();

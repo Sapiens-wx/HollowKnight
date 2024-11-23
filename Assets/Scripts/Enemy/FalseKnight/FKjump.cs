@@ -35,7 +35,7 @@ public class FKjump : FKStateBase
             if (knight.onGround && knight.rgb.velocity.y<=0)
             {
                 knight.rgb.velocity = Vector2.zero;
-                CameraCtrl.inst.StartCoroutine(CameraCtrl.inst.ScreenShake());
+                CameraCtrl.inst.ScreenShakeCM();
                 knight.animator.SetTrigger("jump_land");
                 if(knight.canJumpAndAttack && Random.Range(0,2)==0)
                     knight.animator.SetTrigger("attack");

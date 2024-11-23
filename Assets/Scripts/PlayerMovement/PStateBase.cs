@@ -104,10 +104,11 @@ public class PStateBase : StateMachineBehaviour
     internal void Attack(){
         if(Time.time-player.attackKeyDown<=player.keyDownBuffTime){
             player.attackKeyDown=-100;
-            if(!player.onGround && Input.GetKey(KeyCode.S))
-                player.swordAnimator.SetTrigger("down_slash");
+            if(!player.onGround && Input.GetKey(KeyCode.S)){
+                player.animator.SetTrigger("attack_down");
+            }
             else if(Input.GetKey(KeyCode.W))
-                player.swordAnimator.SetTrigger("up_slash");
+                player.animator.SetTrigger("attack_up");
             else player.animator.SetTrigger("attack_horizontal");
         }
     }

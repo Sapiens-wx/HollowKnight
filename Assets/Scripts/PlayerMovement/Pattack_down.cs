@@ -29,7 +29,25 @@ public class Pattack_down : PStateBase
     IEnumerator m_FixedUpdate(){
         WaitForFixedUpdate wait=new WaitForFixedUpdate();
         while(true){
+            Movement();
+            Jump();
+            ApplyGravity();
             yield return wait;
+        }
+    }
+    override internal void Movement(){
+        player.v.x=player.xspd*player.inputx;
+        //change direction
+        if(player.inputx!=0 && player.inputx!=-player.dir){
+            player.Dir=-player.inputx;
+        }
+    }
+    internal override void Jump()
+    {
+        if(player.jumpKeyUp){
+            player.jumpKeyUp=false;
+            player.v.y=0;
+            //player.animator.SetTrigger("jump_down");
         }
     }
     override internal void ApplyGravity(){
