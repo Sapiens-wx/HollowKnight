@@ -46,8 +46,8 @@ public class Pattack_down : PStateBase
     {
         if(player.jumpKeyUp){
             player.jumpKeyUp=false;
-            player.v.y=0;
-            //player.animator.SetTrigger("jump_down");
+            if(player.v.y>0)
+                player.v.y=0;
         }
     }
     override internal void ApplyGravity(){

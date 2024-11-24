@@ -45,7 +45,8 @@ public class Pattack_horizontal : PStateBase
     {
         if(player.jumpKeyUp){
             player.jumpKeyUp=false;
-            player.v.y=0;
+            if(player.v.y>0)
+                player.v.y=0;
             //player.animator.SetTrigger("jump_down");
         }
     }

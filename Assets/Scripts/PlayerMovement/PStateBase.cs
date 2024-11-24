@@ -102,7 +102,8 @@ public class PStateBase : StateMachineBehaviour
         }
     }
     internal void Attack(){
-        if(Time.time-player.attackKeyDown<=player.keyDownBuffTime){
+        if(Time.time-player.attackKeyDown<=player.keyDownBuffTime && player.attackKeyDown+player.keyDownBuffTime>=player.allowSlashTime){
+            player.allowSlashTime=Time.time+player.slashInterval;
             player.attackKeyDown=-100;
             if(!player.onGround && Input.GetKey(KeyCode.S)){
                 player.animator.SetTrigger("attack_down");

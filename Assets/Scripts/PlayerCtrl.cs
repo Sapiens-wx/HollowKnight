@@ -28,6 +28,7 @@ public class PlayerCtrl : MonoBehaviour
     public float dashInterval;
     [Header("Attack")]
     public float downSlashJumpSpd;
+    public float slashInterval;
     [Header("Throw")]
     public Vector2 throwNailOffset;
     public float maxThrowChargeTime;
@@ -70,6 +71,7 @@ public class PlayerCtrl : MonoBehaviour
     [HideInInspector] public bool throwKeyUp;
     [HideInInspector] public bool attack_down; //whether is in attack_down state
     [HideInInspector] public float attackKeyDown; //whether is in attack_down state
+    [HideInInspector] public float allowSlashTime;
     [HideInInspector] public float skillKeyDown; 
     [HideInInspector] public MaterialPropertyBlock matPB;
     [HideInInspector] public Sequence hitAnim, counterAnim, invincibleAnim;
@@ -125,6 +127,7 @@ public class PlayerCtrl : MonoBehaviour
         skillKeyDown=-100;
 
         allowDashTime=0;
+        allowSlashTime=0;
 
         rgb=GetComponent<Rigidbody2D>();
         animator=GetComponent<Animator>();
@@ -211,8 +214,9 @@ public class PlayerCtrl : MonoBehaviour
             jumpKeyDown=Time.time;
         else if(Input.GetKeyUp(jumpKey))
             jumpKeyUp=true;
-        else if(Input.GetKeyDown(KeyCode.J))
+        else if(Input.GetKeyDown(KeyCode.J)){
             attackKeyDown=Time.time;
+        }
         
         if(Input.GetKeyUp(KeyCode.I))//throw end charge
             throwKeyUp=true;
@@ -228,13 +232,6 @@ public class PlayerCtrl : MonoBehaviour
         */
         UpdateVelocity();
     }
-    #region hit
-    void OnTriggerStay2D(Collider2D collider){
-        if(hittable && GameManager.IsLayer(GameManager.inst.enemyLayer, collider.gameObject.layer)){ //if is enemy
-            animator.SetTrigger("hit");
-        }
-    }
-    #endregion
     void HandleInputs(){
         inputx=(int)Input.GetAxisRaw("Horizontal");
     }
