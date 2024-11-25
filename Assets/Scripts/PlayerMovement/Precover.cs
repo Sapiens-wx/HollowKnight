@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
 
-public class Prun : PStateBase
+public class Precover : PStateBase
 {
-    Coroutine coro;
+    Coroutine coro, recoverCoro;
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
+        player.v.x=0;
+        player.recoverKeyUp=false;
+        PlayerBar.inst.CurEnergy--;
+        recoverCoro=player.StartCoroutine(RecoverAnim());
         coro = player.StartCoroutine(m_FixedUpdate());
     }
 
@@ -24,47 +28,25 @@ public class Prun : PStateBase
     {
         player.StopCoroutine(coro);
         coro=null;
+        if(recoverCoro!=null){
+            player.StopCoroutine(recoverCoro);
+            recoverCoro=null;
+        }
+    }
+    IEnumerator RecoverAnim(){
+        yield return new WaitForSeconds(player.recoverInterval);
+        player.animator.SetTrigger("recover_recover");
+        recoverCoro=null;
     }
     IEnumerator m_FixedUpdate(){
         WaitForFixedUpdate wait=new WaitForFixedUpdate();
         while(true){
-            Recover();
-            Attack();
-            Skill();
-            Movement();
-            Jump();
-            Dash();
-            Counter();
-            Throw();
-            CheckWall();
-            ToWallIfOnWall();
-            ApplyGravity();
+            if(player.recoverKeyUp){
+                Debug.Log("recoverkeyup, set trigger idle");
+                player.recoverKeyUp=false;
+                player.animator.SetTrigger("idle");
+            }
             yield return wait;
-        }
-    }
-    override internal void Movement(){
-        player.v.x=player.xspd*player.inputx;
-        //change direction
-        if(player.inputx==0){
-            player.animator.SetTrigger("idle");
-        }
-        else if(player.inputx!=-player.dir){
-            player.Dir=-player.inputx;
-        }
-    }
-    override internal void Jump(){
-        if(player.onGround && Time.time-player.jumpKeyDown<=player.coyoteTime){
-            player.jumpKeyDown=-100;
-            player.animator.SetTrigger("jump_up");
-        }
-    }
-    override internal void ApplyGravity(){
-        if(player.onGround){
-            if(!player.prevOnGround && player.v.y<0) //on ground enter
-                player.v.y=0;
-        }
-        else{
-            player.animator.SetTrigger("jump_down");
         }
     }
 }

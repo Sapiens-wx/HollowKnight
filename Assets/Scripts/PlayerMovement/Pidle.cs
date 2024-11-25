@@ -32,6 +32,7 @@ public class Pidle : PStateBase
         while(true){
             //switch to run
             if(player.inputx!=0 && player.onGround) player.animator.SetTrigger("run");
+            Recover();
             Attack();
             Skill();
             //jump

@@ -60,7 +60,6 @@ public class EnemyBase : MonoBehaviour
         if (curHealth < 0) {
             animator.SetTrigger("die");
         }
-        Debug.Log("Hit "+Time.time);
     }
     void OnTriggerEnter2D(Collider2D collider){
         if(GameManager.IsLayer(GameManager.inst.playerSwordLayer, collider.gameObject.layer) && Time.time-.23f>hitTime){ //if is sword layer

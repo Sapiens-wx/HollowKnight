@@ -589,6 +589,7 @@ MonoBehaviour:
   hitAnimDuration: 0.15
   counterAnimDuration: 0.07
   timeStopInterval: 0.15
+  recoverInterval: 1
   rgb: {fileID: 363549436}
   animator: {fileID: 0}
   inputx: 0
@@ -616,6 +617,8 @@ MonoBehaviour:
   attackKeyDown: 0
   allowSlashTime: 0
   skillKeyDown: 0
+  recoverKeyDown: 0
+  recoverKeyUp: 0
   hitBy: {fileID: 0}
 --- !u!4 &363549439
 Transform:

@@ -122,4 +122,10 @@ public class PStateBase : StateMachineBehaviour
             }
         }
     }
+    internal void Recover(){
+        if(Time.time-player.recoverKeyDown<=player.keyDownBuffTime&&player.onGround&&PlayerBar.inst.CurHealth!=PlayerBar.inst.MaxHealth&&PlayerBar.inst.CanConsume()){
+            player.recoverKeyDown=-100;
+            player.animator.SetTrigger("recover");
+        }
+    }
 }

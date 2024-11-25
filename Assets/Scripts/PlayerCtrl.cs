@@ -46,6 +46,8 @@ public class PlayerCtrl : MonoBehaviour
     public float invincibleTime;
     public float hitAnimDuration, counterAnimDuration;
     public float timeStopInterval;
+    [Header("Recover")]
+    public float recoverInterval;
 
     [HideInInspector] public Rigidbody2D rgb;
     [HideInInspector] public Animator animator;
@@ -73,6 +75,9 @@ public class PlayerCtrl : MonoBehaviour
     [HideInInspector] public float attackKeyDown; //whether is in attack_down state
     [HideInInspector] public float allowSlashTime;
     [HideInInspector] public float skillKeyDown; 
+    //recover
+    [HideInInspector] public float recoverKeyDown;
+    [HideInInspector] public bool recoverKeyUp;
     [HideInInspector] public MaterialPropertyBlock matPB;
     [HideInInspector] public Sequence hitAnim, counterAnim, invincibleAnim;
     [HideInInspector] public Collider2D hitBy;
@@ -126,6 +131,7 @@ public class PlayerCtrl : MonoBehaviour
         dashKeyDown=-100;
         attackKeyDown=-100;
         skillKeyDown=-100;
+        recoverKeyDown=-100;
 
         allowDashTime=0;
         allowSlashTime=0;
@@ -201,7 +207,9 @@ public class PlayerCtrl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.O))//counter
+        if(Input.GetKeyDown(KeyCode.E))//recover
+            recoverKeyDown=Time.time;
+        else if(Input.GetKeyDown(KeyCode.O))//counter
             counterKeyDown=Time.time;
         else if(Input.GetKeyDown(KeyCode.U)) //skill
             skillKeyDown=Time.time;
@@ -221,6 +229,9 @@ public class PlayerCtrl : MonoBehaviour
         
         if(Input.GetKeyUp(KeyCode.I))//throw end charge
             throwKeyUp=true;
+        if(Input.GetKeyUp(KeyCode.E)){//recover
+            recoverKeyUp=true;
+        }
     }
     void FixedUpdate(){
         HandleInputs();

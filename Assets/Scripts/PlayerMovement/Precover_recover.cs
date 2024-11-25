@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
 
-public class Prun : PStateBase
+public class Precover_recover : PStateBase
 {
     Coroutine coro;
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
+        PlayerBar.inst.CurEnergy--;
+        PlayerBar.inst.SetCurHealth(PlayerBar.inst.CurHealth+1, null);
+        if(PlayerBar.inst.CurHealth==PlayerBar.inst.MaxHealth || !PlayerBar.inst.CanConsume())
+            animator.SetTrigger("idle");
         coro = player.StartCoroutine(m_FixedUpdate());
     }
 
@@ -28,43 +32,11 @@ public class Prun : PStateBase
     IEnumerator m_FixedUpdate(){
         WaitForFixedUpdate wait=new WaitForFixedUpdate();
         while(true){
-            Recover();
-            Attack();
-            Skill();
-            Movement();
-            Jump();
-            Dash();
-            Counter();
-            Throw();
-            CheckWall();
-            ToWallIfOnWall();
-            ApplyGravity();
+            if(player.recoverKeyUp){
+                player.recoverKeyUp=false;
+                player.animator.SetTrigger("idle");
+            }
             yield return wait;
-        }
-    }
-    override internal void Movement(){
-        player.v.x=player.xspd*player.inputx;
-        //change direction
-        if(player.inputx==0){
-            player.animator.SetTrigger("idle");
-        }
-        else if(player.inputx!=-player.dir){
-            player.Dir=-player.inputx;
-        }
-    }
-    override internal void Jump(){
-        if(player.onGround && Time.time-player.jumpKeyDown<=player.coyoteTime){
-            player.jumpKeyDown=-100;
-            player.animator.SetTrigger("jump_up");
-        }
-    }
-    override internal void ApplyGravity(){
-        if(player.onGround){
-            if(!player.prevOnGround && player.v.y<0) //on ground enter
-                player.v.y=0;
-        }
-        else{
-            player.animator.SetTrigger("jump_down");
         }
     }
 }
