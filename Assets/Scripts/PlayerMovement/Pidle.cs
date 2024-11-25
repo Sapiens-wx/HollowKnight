@@ -31,7 +31,7 @@ public class Pidle : PStateBase
         WaitForFixedUpdate wait=new WaitForFixedUpdate();
         while(true){
             //switch to run
-            if(player.inputx!=0) player.animator.SetTrigger("run");
+            if(player.inputx!=0 && player.onGround) player.animator.SetTrigger("run");
             Attack();
             Skill();
             //jump

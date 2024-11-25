@@ -32,7 +32,7 @@ public class SavePoint : MonoBehaviour
             RevivePoint.RevivePlayer();
             return;
         }
-        PlayerCtrl.inst.transform.position=lastSavePoint.transform.position+new Vector3(0,PlayerCtrl.inst.bc.bounds.extents.y-PlayerCtrl.inst.bc.bounds.center.y,0);
+        PlayerCtrl.inst.transform.position=lastSavePoint.transform.position+new Vector3(0,PlayerCtrl.inst.bc.bounds.extents.y-PlayerCtrl.inst.bc.offset.y,0);
     }
 
 }

@@ -67,6 +67,8 @@ public class EnemyBase : MonoBehaviour
             hitTime=Time.time;
             Hit(1);
             s.Restart();
+            //gain energy to the player
+            PlayerBar.inst.CurEnergy+=1;
         }
     }
     internal void CheckOnGround(){

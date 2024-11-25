@@ -4,13 +4,19 @@ using UnityEngine;
 
 public class PlayerBar : MonoBehaviour
 {
-    [SerializeField] int maxHealth;
+    //!!! maxEnergy: when set in inspector, if you want maxEnergy to be 5, 
+    //               set to 5. the script will initialize it to 10. maxEnergy
+    //               is always storing two times the actual maxEnergy
+    [SerializeField] int maxHealth, maxEnergy; 
     [SerializeField] Life lifePrefab;
-    [SerializeField] Transform livesGrid;
+    [SerializeField] Energy energyPrefab;
+    [SerializeField] Transform livesGrid, energyGrid;
 
     public static PlayerBar inst;
     private int curHealth;
+    private int curEnergy;
     List<Life> lives;
+    List<Energy> energies;
     public int MaxHealth{
         get=>maxHealth;
         set{
@@ -25,21 +31,42 @@ public class PlayerBar : MonoBehaviour
     public int CurHealth{
         get=>curHealth;
     }
+    public int MaxEnergy{
+        get=>maxEnergy;
+        set{
+            maxEnergy=value;
+            int actualMaxE=maxEnergy>>1;
+            for(int i=energies.Count;i<actualMaxE;++i){
+                Energy go = Instantiate(energyPrefab).GetComponent<Energy>();
+                go.transform.SetParent(energyGrid);
+                energies.Add(go);
+            }
+        }
+    }
+    public int CurEnergy{
+        get=>curEnergy;
+        set{
+            if(value>maxEnergy) return;
+            curEnergy=value;
+            int actualE=curEnergy>>1;
+            int remainder=curEnergy%2;
+            for(int i=energies.Count-1;i>=0;--i){
+                energies[i].TurnOn(i<actualE);
+            }
+            if(remainder==1)
+                energies[actualE].HalfOn();
+        }
+    }
     void Awake(){
         inst=this;
     }
     void Start(){
         lives=new List<Life>();
+        energies=new List<Energy>();
         MaxHealth=maxHealth;
+        MaxEnergy=maxEnergy<<1;
         SetCurHealth(maxHealth, null);
-    }
-    void OnTriggerStay2D(Collider2D collider){
-        //if is enemy, player is hit
-        if(PlayerCtrl.inst.hittable && GameManager.IsLayer(GameManager.inst.enemyLayer, collider.gameObject.layer)){ 
-            PlayerCtrl.inst.animator.SetTrigger("hit");
-            //deal damage
-            SetCurHealth(curHealth-1, collider.gameObject);
-        }
+        CurEnergy=0;
     }
     public void SetCurHealth(int value, GameObject from){
         curHealth=value;
@@ -55,5 +82,11 @@ public class PlayerBar : MonoBehaviour
             SetCurHealth(maxHealth, null);
             RevivePoint.RevivePlayer();
         }
+    }
+    public bool CanConsume(){
+        return curEnergy>1;
+    }
+    public void Consume(){
+        CurEnergy-=2;
     }
 }

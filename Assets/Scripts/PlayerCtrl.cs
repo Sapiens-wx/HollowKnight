@@ -75,6 +75,7 @@ public class PlayerCtrl : MonoBehaviour
     [HideInInspector] public float skillKeyDown; 
     [HideInInspector] public MaterialPropertyBlock matPB;
     [HideInInspector] public Sequence hitAnim, counterAnim, invincibleAnim;
+    [HideInInspector] public Collider2D hitBy;
     public int Dir{
         get=>dir;
         set{
@@ -251,5 +252,12 @@ public class PlayerCtrl : MonoBehaviour
         Time.timeScale=0;
         yield return new WaitForSecondsRealtime(sec);
         Time.timeScale=1;
+    }
+    void OnTriggerStay2D(Collider2D collider){
+        //if is enemy, player is hit
+        if(PlayerCtrl.inst.hittable && GameManager.IsLayer(GameManager.inst.enemyLayer, collider.gameObject.layer)){ 
+            PlayerCtrl.inst.animator.SetTrigger("hit");
+            hitBy=collider;
+        }
     }
 }

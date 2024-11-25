@@ -116,7 +116,10 @@ public class PStateBase : StateMachineBehaviour
     internal void Skill(){
         if(Time.time-player.skillKeyDown<=player.keyDownBuffTime){
             player.skillKeyDown=-100;
-            player.animator.SetTrigger("skill_throw");
+            if(PlayerBar.inst.CanConsume()){
+                PlayerBar.inst.Consume();
+                player.animator.SetTrigger("skill_throw");
+            }
         }
     }
 }

@@ -31,6 +31,8 @@ public class Pdash_recover : PStateBase
             Attack();
             Movement();
             ApplyGravity();
+            CheckWall();
+            ToWallIfOnWall();
             yield return wait;
         }
     }

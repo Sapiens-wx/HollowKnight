@@ -16,8 +16,8 @@ public class RevivePoint : MonoBehaviour
     void Start(){
         if(defaultRevivePoint)
             lastRevivePoint=this;
-        min=bounds.min;
-        max=bounds.max;
+        min=bounds.min+transform.position;
+        max=bounds.max+transform.position;
         StartCoroutine(Detection());
     }
     IEnumerator Detection(){
@@ -35,6 +35,6 @@ public class RevivePoint : MonoBehaviour
         }
     }
     public static void RevivePlayer(){
-        PlayerCtrl.inst.transform.position=lastRevivePoint.transform.position+new Vector3(0,-PlayerCtrl.inst.bc.bounds.min.y,0);
+        PlayerCtrl.inst.transform.position=lastRevivePoint.transform.position+new Vector3(0,PlayerCtrl.inst.bc.bounds.extents.y-PlayerCtrl.inst.bc.offset.y,0);
     }
 }
