@@ -28,6 +28,7 @@ public class PlayerCtrl : MonoBehaviour
     public float dashInterval;
     [Header("Attack")]
     public float downSlashJumpSpd;
+    public float slashInterval;
     [Header("Throw")]
     public Vector2 throwNailOffset;
     public float maxThrowChargeTime;
@@ -45,6 +46,8 @@ public class PlayerCtrl : MonoBehaviour
     public float invincibleTime;
     public float hitAnimDuration, counterAnimDuration;
     public float timeStopInterval;
+    [Header("Recover")]
+    public float recoverInterval;
 
     [HideInInspector] public Rigidbody2D rgb;
     [HideInInspector] public Animator animator;
@@ -70,9 +73,14 @@ public class PlayerCtrl : MonoBehaviour
     [HideInInspector] public bool throwKeyUp;
     [HideInInspector] public bool attack_down; //whether is in attack_down state
     [HideInInspector] public float attackKeyDown; //whether is in attack_down state
+    [HideInInspector] public float allowSlashTime;
     [HideInInspector] public float skillKeyDown; 
+    //recover
+    [HideInInspector] public float recoverKeyDown;
+    [HideInInspector] public bool recoverKeyUp;
     [HideInInspector] public MaterialPropertyBlock matPB;
     [HideInInspector] public Sequence hitAnim, counterAnim, invincibleAnim;
+    [HideInInspector] public Collider2D hitBy;
     public int Dir{
         get=>dir;
         set{
@@ -123,8 +131,10 @@ public class PlayerCtrl : MonoBehaviour
         dashKeyDown=-100;
         attackKeyDown=-100;
         skillKeyDown=-100;
+        recoverKeyDown=-100;
 
         allowDashTime=0;
+        allowSlashTime=0;
 
         rgb=GetComponent<Rigidbody2D>();
         animator=GetComponent<Animator>();
@@ -197,7 +207,9 @@ public class PlayerCtrl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.O))//counter
+        if(Input.GetKeyDown(KeyCode.E))//recover
+            recoverKeyDown=Time.time;
+        else if(Input.GetKeyDown(KeyCode.O))//counter
             counterKeyDown=Time.time;
         else if(Input.GetKeyDown(KeyCode.U)) //skill
             skillKeyDown=Time.time;
@@ -211,11 +223,15 @@ public class PlayerCtrl : MonoBehaviour
             jumpKeyDown=Time.time;
         else if(Input.GetKeyUp(jumpKey))
             jumpKeyUp=true;
-        else if(Input.GetKeyDown(KeyCode.J))
+        else if(Input.GetKeyDown(KeyCode.J)){
             attackKeyDown=Time.time;
+        }
         
         if(Input.GetKeyUp(KeyCode.I))//throw end charge
             throwKeyUp=true;
+        if(Input.GetKeyUp(KeyCode.E)){//recover
+            recoverKeyUp=true;
+        }
     }
     void FixedUpdate(){
         HandleInputs();
@@ -228,13 +244,6 @@ public class PlayerCtrl : MonoBehaviour
         */
         UpdateVelocity();
     }
-    #region hit
-    void OnTriggerStay2D(Collider2D collider){
-        if(hittable && GameManager.IsLayer(GameManager.inst.enemyLayer, collider.gameObject.layer)){ //if is enemy
-            animator.SetTrigger("hit");
-        }
-    }
-    #endregion
     void HandleInputs(){
         inputx=(int)Input.GetAxisRaw("Horizontal");
     }
@@ -254,5 +263,12 @@ public class PlayerCtrl : MonoBehaviour
         Time.timeScale=0;
         yield return new WaitForSecondsRealtime(sec);
         Time.timeScale=1;
+    }
+    void OnTriggerStay2D(Collider2D collider){
+        //if is enemy, player is hit
+        if(PlayerCtrl.inst.hittable && GameManager.IsLayer(GameManager.inst.enemyLayer, collider.gameObject.layer)){ 
+            PlayerCtrl.inst.animator.SetTrigger("hit");
+            hitBy=collider;
+        }
     }
 }

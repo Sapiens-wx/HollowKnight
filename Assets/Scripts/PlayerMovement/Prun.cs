@@ -28,6 +28,7 @@ public class Prun : PStateBase
     IEnumerator m_FixedUpdate(){
         WaitForFixedUpdate wait=new WaitForFixedUpdate();
         while(true){
+            Recover();
             Attack();
             Skill();
             Movement();
@@ -52,7 +53,7 @@ public class Prun : PStateBase
         }
     }
     override internal void Jump(){
-        if(Time.time-player.jumpKeyDown<=player.coyoteTime){
+        if(player.onGround && Time.time-player.jumpKeyDown<=player.coyoteTime){
             player.jumpKeyDown=-100;
             player.animator.SetTrigger("jump_up");
         }

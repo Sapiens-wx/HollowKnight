@@ -1,16 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
 using UnityEngine;
 
-public class Pattack_down : PStateBase
+public class Precover : PStateBase
 {
-    Coroutine coro;
+    Coroutine coro, recoverCoro;
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
+        player.v.x=0;
+        player.recoverKeyUp=false;
+        PlayerBar.inst.CurEnergy--;
+        recoverCoro=player.StartCoroutine(RecoverAnim());
         coro = player.StartCoroutine(m_FixedUpdate());
-        player.attack_down=true;
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -24,34 +28,25 @@ public class Pattack_down : PStateBase
     {
         player.StopCoroutine(coro);
         coro=null;
-        player.attack_down=false;
+        if(recoverCoro!=null){
+            player.StopCoroutine(recoverCoro);
+            recoverCoro=null;
+        }
+    }
+    IEnumerator RecoverAnim(){
+        yield return new WaitForSeconds(player.recoverInterval);
+        player.animator.SetTrigger("recover_recover");
+        recoverCoro=null;
     }
     IEnumerator m_FixedUpdate(){
         WaitForFixedUpdate wait=new WaitForFixedUpdate();
         while(true){
-            Movement();
-            Jump();
-            ApplyGravity();
+            if(player.recoverKeyUp){
+                Debug.Log("recoverkeyup, set trigger idle");
+                player.recoverKeyUp=false;
+                player.animator.SetTrigger("idle");
+            }
             yield return wait;
         }
-    }
-    override internal void Movement(){
-        player.v.x=player.xspd*player.inputx;
-        //change direction
-        if(player.inputx!=0 && player.inputx!=-player.dir){
-            player.Dir=-player.inputx;
-        }
-    }
-    internal override void Jump()
-    {
-        if(player.jumpKeyUp){
-            player.jumpKeyUp=false;
-            if(player.v.y>0)
-                player.v.y=0;
-        }
-    }
-    override internal void ApplyGravity(){
-        if(player.v.y>=player.maxFallSpd)
-            player.v.y+=player.gravity*Time.fixedDeltaTime;
     }
 }
