@@ -3,18 +3,15 @@ using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
 
-public class Precover : PStateBase
+public class E2_chase : E2StateBase
 {
-    Coroutine coro, recoverCoro;
+    Coroutine coro, chaseCoro;
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
-        player.v.x=0;
-        player.recoverKeyUp=false;
-        PlayerBar.inst.CurEnergy--;
-        recoverCoro=player.StartCoroutine(RecoverAnim());
-        coro = player.StartCoroutine(m_FixedUpdate());
+        coro = enemy.StartCoroutine(m_FixedUpdate());
+        chaseCoro=enemy.StartCoroutine(Chase());
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -26,24 +23,26 @@ public class Precover : PStateBase
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        player.StopCoroutine(coro);
+        enemy.StopCoroutine(coro);
         coro=null;
-        if(recoverCoro!=null){
-            player.StopCoroutine(recoverCoro);
-            recoverCoro=null;
+        if(chaseCoro!=null){
+            enemy.StopCoroutine(chaseCoro);
+            chaseCoro=null;
         }
     }
-    IEnumerator RecoverAnim(){
-        yield return new WaitForSeconds(player.recoverInterval);
-        player.animator.SetTrigger("recover_recover");
-        recoverCoro=null;
+    IEnumerator Chase(){
+        WaitForSeconds wait=new WaitForSeconds(.4f);
+        while(true){
+            Vector2 dir=((Vector2)PlayerCtrl.inst.transform.position-(Vector2)enemy.transform.position).normalized;
+            enemy.rgb.velocity=dir*enemy.chaseSpd;
+            yield return wait;
+        }
     }
     IEnumerator m_FixedUpdate(){
         WaitForFixedUpdate wait=new WaitForFixedUpdate();
         while(true){
-            if(player.recoverKeyUp){
-                player.recoverKeyUp=false;
-                player.animator.SetTrigger("idle");
+            if(enemy.InsideAttackBounds()){
+                TryAttack();
             }
             yield return wait;
         }

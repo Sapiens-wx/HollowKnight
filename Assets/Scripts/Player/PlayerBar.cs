@@ -68,7 +68,7 @@ public class PlayerBar : MonoBehaviour
         SetCurHealth(maxHealth, null);
         CurEnergy=0;
     }
-    public void SetCurHealth(int value, GameObject from){
+    public void SetCurHealth(int value, Collider2D from){
         curHealth=value;
         for(int i=lives.Count-1;i>=0;--i){
             lives[i].TurnOn(i<curHealth);

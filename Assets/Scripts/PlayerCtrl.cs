@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using DG.Tweening;
 using UnityEngine;
@@ -38,7 +39,6 @@ public class PlayerCtrl : MonoBehaviour
     [Header("Ground Check")]
     public Vector2 leftBot;
     public Vector2 rightBot;
-    public LayerMask groundLayer;
     [Header("Ceiling Check")]
     public Vector2 leftTop;
     public Vector2 rightTop;
@@ -81,6 +81,7 @@ public class PlayerCtrl : MonoBehaviour
     [HideInInspector] public MaterialPropertyBlock matPB;
     [HideInInspector] public Sequence hitAnim, counterAnim, invincibleAnim;
     [HideInInspector] public Collider2D hitBy;
+    public event Action OnPlayerHit;
     public int Dir{
         get=>dir;
         set{
@@ -94,6 +95,7 @@ public class PlayerCtrl : MonoBehaviour
             climbBot.x*=-1;
             throwNailOffset.x*=-1;
             wallJumpXSpd*=-1;
+            UniCamBehav.inst.ChangeXOffset(-dir);
             return;
         }
     }
@@ -252,12 +254,12 @@ public class PlayerCtrl : MonoBehaviour
     }
     void CheckOnGround(){
         prevOnGround=onGround;
-        onGround = Physics2D.OverlapArea((Vector2)transform.position+leftBot, (Vector2)transform.position+rightBot, groundLayer);
+        onGround = Physics2D.OverlapArea((Vector2)transform.position+leftBot, (Vector2)transform.position+rightBot, GameManager.inst.groundLayer);
         if(onGround)
             canDash=true;
     }
     void CheckWall(){
-        onWall = Physics2D.OverlapArea((Vector2)transform.position+climbBot, (Vector2)transform.position+climbTop, groundLayer);
+        onWall = Physics2D.OverlapArea((Vector2)transform.position+climbBot, (Vector2)transform.position+climbTop, GameManager.inst.groundLayer);
     }
     IEnumerator PauseForSeconds(float sec){
         Time.timeScale=0;
@@ -269,6 +271,7 @@ public class PlayerCtrl : MonoBehaviour
         if(PlayerCtrl.inst.hittable && GameManager.IsLayer(GameManager.inst.enemyLayer, collider.gameObject.layer)){ 
             PlayerCtrl.inst.animator.SetTrigger("hit");
             hitBy=collider;
+            OnPlayerHit?.Invoke();
         }
     }
 }

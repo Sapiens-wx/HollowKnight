@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour{
     public LayerMask groundLayer,enemyLayer,playerSwordLayer,playerLayer;
+    public Bullet bullet_enemy2;
 
     public static GameManager inst;
     void Awake(){

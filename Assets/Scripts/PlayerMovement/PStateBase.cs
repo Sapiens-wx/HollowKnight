@@ -61,7 +61,7 @@ public class PStateBase : StateMachineBehaviour
         player.animator.SetTrigger("dash_recover");
     }
     internal void CeilingCheck(){
-        if(Physics2D.OverlapArea((Vector2)player.transform.position+player.leftTop, (Vector2)player.transform.position+player.rightTop, player.groundLayer)){
+        if(Physics2D.OverlapArea((Vector2)player.transform.position+player.leftTop, (Vector2)player.transform.position+player.rightTop, GameManager.inst.groundLayer)){
             if(player.v.y>0){
                 player.v.y=0;
                 player.animator.SetTrigger("jump_down");
@@ -72,7 +72,7 @@ public class PStateBase : StateMachineBehaviour
         throw new System.Exception("Jump function not implemented");
     }
     internal void CheckWall(){
-        player.onWall = Physics2D.OverlapArea((Vector2)player.transform.position+player.climbBot, (Vector2)player.transform.position+player.climbTop, player.groundLayer);
+        player.onWall = Physics2D.OverlapArea((Vector2)player.transform.position+player.climbBot, (Vector2)player.transform.position+player.climbTop, GameManager.inst.groundLayer);
     }
     internal virtual void ToWallIfOnWall(){
         if(player.onWall && !player.onGround && player.inputx!=0){

@@ -1,20 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-public class Precover : PStateBase
+public class E2_idle : E2StateBase
 {
-    Coroutine coro, recoverCoro;
+    Coroutine coro;
+    Coroutine patrolCoro;
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
-        player.v.x=0;
-        player.recoverKeyUp=false;
-        PlayerBar.inst.CurEnergy--;
-        recoverCoro=player.StartCoroutine(RecoverAnim());
-        coro = player.StartCoroutine(m_FixedUpdate());
+        coro = enemy.StartCoroutine(m_FixedUpdate());
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -26,24 +24,22 @@ public class Precover : PStateBase
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        player.StopCoroutine(coro);
+        enemy.StopCoroutine(coro);
         coro=null;
-        if(recoverCoro!=null){
-            player.StopCoroutine(recoverCoro);
-            recoverCoro=null;
-        }
-    }
-    IEnumerator RecoverAnim(){
-        yield return new WaitForSeconds(player.recoverInterval);
-        player.animator.SetTrigger("recover_recover");
-        recoverCoro=null;
     }
     IEnumerator m_FixedUpdate(){
         WaitForFixedUpdate wait=new WaitForFixedUpdate();
         while(true){
-            if(player.recoverKeyUp){
-                player.recoverKeyUp=false;
-                player.animator.SetTrigger("idle");
+            //patrol
+            HorizontalMovement();
+            VerticalMovement();
+
+            //detect player
+            if(enemy.DetectPlayer()){
+                if(Mathf.Sign(PlayerCtrl.inst.transform.position.x-enemy.transform.position.x)!=enemy.Dir){
+                    enemy.animator.SetTrigger("turn");
+                }
+                enemy.animator.SetTrigger("chase");
             }
             yield return wait;
         }
