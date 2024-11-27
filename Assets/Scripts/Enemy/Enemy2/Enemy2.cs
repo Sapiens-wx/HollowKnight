@@ -11,6 +11,9 @@ public class Enemy2 : EnemyBase
     [Header("Attack")]
     public float attackInterval;
     public float bulletSpd;
+    [Header("Hit")]
+    public float hitStateDuration;
+    public float hitDist;
 
     [HideInInspector] public Vector2 spawnPos;
     [HideInInspector] public float allowAttackTime;
@@ -34,6 +37,26 @@ public class Enemy2 : EnemyBase
         Vector2 max=detectBounds.max+transform.position;
         Vector2 pos=PlayerCtrl.inst.transform.position;
         return !(min.x>pos.x||min.y>pos.y||max.x<pos.x||max.y<pos.y);
+    }
+    public override void Hit(int damage)
+    {
+        base.Hit(damage);
+        float spd=hitDist/hitStateDuration;
+        switch(PlayerCtrl.inst.lastAttackType){
+            case PlayerCtrl.AttackType.Throw:
+            case PlayerCtrl.AttackType.SlashHorizontal: 
+                rgb.velocity=new Vector2(PlayerCtrl.inst.dir==-1?spd:-spd,0);
+                break;
+            case PlayerCtrl.AttackType.Counter:
+            case PlayerCtrl.AttackType.Other:
+            case PlayerCtrl.AttackType.SlashUp:
+                rgb.velocity=((Vector2)transform.position-(Vector2)PlayerCtrl.inst.transform.position-PlayerCtrl.inst.bc.offset).normalized*spd;
+                break;
+            case PlayerCtrl.AttackType.SlashDown:
+                rgb.velocity=new Vector2(0,-spd);
+                break;
+        }
+        animator.SetTrigger("hit");
     }
     public bool InsideAttackBounds(){
         Vector2 min=attackBounds.min+transform.position;

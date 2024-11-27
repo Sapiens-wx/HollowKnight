@@ -7,9 +7,10 @@ public class UniCamBehav : MonoBehaviour
 {
     public static UniCamBehav inst;
     public CinemachineCameraOffset vmOffset;
-    public void ChangeXOffset(float val){
-        DOTween.To(()=>vmOffset.m_Offset.x, (val)=>{
-            vmOffset.m_Offset=new Vector3(val, vmOffset.m_Offset.y,vmOffset.m_Offset.z);
+    public static void ChangeXOffset(float val){
+        if(inst==null) return;
+        DOTween.To(()=>inst.vmOffset.m_Offset.x, (val)=>{
+            inst.vmOffset.m_Offset=new Vector3(val, inst.vmOffset.m_Offset.y,inst.vmOffset.m_Offset.z);
         }, val, .5f);
     }
     void OnEnable(){

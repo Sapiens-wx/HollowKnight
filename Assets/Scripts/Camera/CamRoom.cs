@@ -18,6 +18,24 @@ public class CamRoom : MonoBehaviour
         Vector2 pos=PlayerCtrl.inst.transform.position;
         return !(min.x>pos.x||min.y>pos.y||max.x<pos.x||max.y<pos.y);
     }
+    Vector2 GetPosForUpdatePlayerPos(){
+        return new Vector2(PlayerCtrl.inst.transform.position.x, bounds.min.y+transform.position.y);
+    }
+    void UpdatePlayerPos(Vector2 pos){
+
+        RaycastHit2D hit=Physics2D.Raycast(pos, new Vector2(-PlayerCtrl.inst.Dir,0),float.MaxValue,GameManager.inst.groundLayer);
+        if(!hit){
+            Debug.LogError("in CamRoom::GeneratePlayerPos, ray cast did not hit");
+            return;
+        }
+        Vector2 extents=PlayerCtrl.inst.bc.bounds.extents;
+        Vector2 offset=PlayerCtrl.inst.bc.offset;
+        Vector2 newPos=new Vector2(hit.point.x, 0);
+        newPos+=new Vector2(
+            PlayerCtrl.inst.Dir==-1?extents.x-offset.x:offset.x-extents.x,
+            hit.collider.bounds.extents.y-hit.collider.offset.y+hit.transform.position.y+extents.y-offset.y);
+        PlayerCtrl.inst.transform.position=newPos;
+    }
     static void SetActiveRoom(CamRoom room){
         if(room==null){
             activeRoom=null;
@@ -25,7 +43,18 @@ public class CamRoom : MonoBehaviour
             if(activeRoom!=null)
                 activeRoom.vm.SetActive(false);
             activeRoom=room;
-            room.vm.SetActive(true);
+            //if player jumped upward to this room
+            if(PlayerCtrl.inst.transform.position.y<activeRoom.bounds.min.y+activeRoom.transform.position.y+.4f){
+                PlayerCtrl.inst.v=Vector2.zero;
+                activeRoom.UpdatePlayerPos(activeRoom.GetPosForUpdatePlayerPos());
+            }
+
+            PlayerCtrl.inst.ReadInput=false;
+            Fade.BlackInOut(()=>{
+                room.vm.SetActive(true);
+            },()=>{
+                PlayerCtrl.inst.ReadInput=true;
+            });
         }
     }
     void FixedUpdate(){

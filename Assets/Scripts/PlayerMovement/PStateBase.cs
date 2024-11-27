@@ -108,9 +108,14 @@ public class PStateBase : StateMachineBehaviour
             if(!player.onGround && Input.GetKey(KeyCode.S)){
                 player.animator.SetTrigger("attack_down");
             }
-            else if(Input.GetKey(KeyCode.W))
+            else if(Input.GetKey(KeyCode.W)){
                 player.animator.SetTrigger("attack_up");
-            else player.animator.SetTrigger("attack_horizontal");
+                player.lastAttackType=PlayerCtrl.AttackType.SlashUp;
+            }
+            else {
+                player.animator.SetTrigger("attack_horizontal");
+                player.lastAttackType=PlayerCtrl.AttackType.SlashHorizontal;
+            }
         }
     }
     internal void Skill(){

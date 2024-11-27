@@ -73,6 +73,7 @@ public class PlayerCtrl : MonoBehaviour
     [HideInInspector] public bool throwKeyUp;
     [HideInInspector] public bool attack_down; //whether is in attack_down state
     [HideInInspector] public float attackKeyDown; //whether is in attack_down state
+    [HideInInspector] public AttackType lastAttackType;
     [HideInInspector] public float allowSlashTime;
     [HideInInspector] public float skillKeyDown; 
     //recover
@@ -81,6 +82,17 @@ public class PlayerCtrl : MonoBehaviour
     [HideInInspector] public MaterialPropertyBlock matPB;
     [HideInInspector] public Sequence hitAnim, counterAnim, invincibleAnim;
     [HideInInspector] public Collider2D hitBy;
+    //read input
+    bool readInput;
+    public bool ReadInput{
+        get=>readInput;
+        set{
+            readInput=value;
+            if(!readInput){
+                inputx=0;
+            }
+        }
+    }
     public event Action OnPlayerHit;
     public int Dir{
         get=>dir;
@@ -95,7 +107,7 @@ public class PlayerCtrl : MonoBehaviour
             climbBot.x*=-1;
             throwNailOffset.x*=-1;
             wallJumpXSpd*=-1;
-            UniCamBehav.inst.ChangeXOffset(-dir);
+            UniCamBehav.ChangeXOffset(-dir);
             return;
         }
     }
@@ -125,6 +137,7 @@ public class PlayerCtrl : MonoBehaviour
     void Start()
     {
         OnValidate();
+        readInput=true;
         hittable=true;
         Dir=-1;
         jumpKeyDown=-100;
@@ -209,30 +222,32 @@ public class PlayerCtrl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.E))//recover
-            recoverKeyDown=Time.time;
-        else if(Input.GetKeyDown(KeyCode.O))//counter
-            counterKeyDown=Time.time;
-        else if(Input.GetKeyDown(KeyCode.U)) //skill
-            skillKeyDown=Time.time;
-        else if(Input.GetKeyDown(KeyCode.I)){//throw
-            throwKeyDown=Time.time;
-            throwKeyUp=false;
-        }
-        else if(Input.GetKeyDown(KeyCode.L))//dash
-            dashKeyDown=Time.time;
-        else if(Input.GetKeyDown(jumpKey))
-            jumpKeyDown=Time.time;
-        else if(Input.GetKeyUp(jumpKey))
-            jumpKeyUp=true;
-        else if(Input.GetKeyDown(KeyCode.J)){
-            attackKeyDown=Time.time;
-        }
-        
-        if(Input.GetKeyUp(KeyCode.I))//throw end charge
-            throwKeyUp=true;
-        if(Input.GetKeyUp(KeyCode.E)){//recover
-            recoverKeyUp=true;
+        if(readInput){
+            if(Input.GetKeyDown(KeyCode.E))//recover
+                recoverKeyDown=Time.time;
+            else if(Input.GetKeyDown(KeyCode.O))//counter
+                counterKeyDown=Time.time;
+            else if(Input.GetKeyDown(KeyCode.U)) //skill
+                skillKeyDown=Time.time;
+            else if(Input.GetKeyDown(KeyCode.I)){//throw
+                throwKeyDown=Time.time;
+                throwKeyUp=false;
+            }
+            else if(Input.GetKeyDown(KeyCode.L))//dash
+                dashKeyDown=Time.time;
+            else if(Input.GetKeyDown(jumpKey))
+                jumpKeyDown=Time.time;
+            else if(Input.GetKeyUp(jumpKey))
+                jumpKeyUp=true;
+            else if(Input.GetKeyDown(KeyCode.J)){
+                attackKeyDown=Time.time;
+            }
+            
+            if(Input.GetKeyUp(KeyCode.I))//throw end charge
+                throwKeyUp=true;
+            if(Input.GetKeyUp(KeyCode.E)){//recover
+                recoverKeyUp=true;
+            }
         }
     }
     void FixedUpdate(){
@@ -247,7 +262,8 @@ public class PlayerCtrl : MonoBehaviour
         UpdateVelocity();
     }
     void HandleInputs(){
-        inputx=(int)Input.GetAxisRaw("Horizontal");
+        if(readInput)
+            inputx=(int)Input.GetAxisRaw("Horizontal");
     }
     void UpdateVelocity(){
         rgb.velocity=v;
@@ -273,5 +289,15 @@ public class PlayerCtrl : MonoBehaviour
             hitBy=collider;
             OnPlayerHit?.Invoke();
         }
+    }
+    //0b1000 is the mask for slash
+    public enum AttackType{
+        SlashHorizontal=0b1001,
+        SlashUp=0b1010,
+        SlashDown=0b1011,
+        Counter=0,
+        Throw=1,
+        Other=2,
+        Mask_Slash=0b1000
     }
 }

@@ -15,6 +15,7 @@ public class Pcounter_attack : PStateBase
         coro = player.StartCoroutine(m_FixedUpdate());
         player.counterAnim.Restart();
         player.hittable=false;
+        player.lastAttackType=PlayerCtrl.AttackType.Counter;
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks

@@ -13,6 +13,8 @@ public class Phit : PStateBase
         animator.SetTrigger(player.onGround?"hit_ground":"hit_air");
         //deal damage
         PlayerBar.inst.SetCurHealth(PlayerBar.inst.CurHealth-1, player.hitBy);
+        //hit effect
+        PlayerEffects.inst.PlayEffect(PlayerEffects.EffectType.Hit);
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
