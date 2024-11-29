@@ -11,6 +11,7 @@ public class Enemy2 : EnemyBase
     [Header("Attack")]
     public float attackInterval;
     public float bulletSpd;
+    public float bulletAngle;
     [Header("Hit")]
     public float hitStateDuration;
     public float hitDist;
@@ -30,6 +31,7 @@ public class Enemy2 : EnemyBase
         base.Start();
         spawnPos=transform.position;
         allowAttackTime=0;
+        EnemyManager.inst.RegisterEnemy(this);
     }
 
     public bool DetectPlayer(){
@@ -63,5 +65,10 @@ public class Enemy2 : EnemyBase
         Vector2 max=attackBounds.max+transform.position;
         Vector2 pos=PlayerCtrl.inst.transform.position;
         return !(min.x>pos.x||min.y>pos.y||max.x<pos.x||max.y<pos.y);
+    }
+    public override void Recover()
+    {
+        base.Recover();
+        rgb.gravityScale=0;
     }
 }

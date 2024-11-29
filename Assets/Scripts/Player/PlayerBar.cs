@@ -80,6 +80,7 @@ public class PlayerBar : MonoBehaviour
         //die
         if(curHealth<=0){
             SetCurHealth(maxHealth, null);
+            EnemyManager.inst.RecoverEnemies();
             RevivePoint.RevivePlayer();
         }
     }

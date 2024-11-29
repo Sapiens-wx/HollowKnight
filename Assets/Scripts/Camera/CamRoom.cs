@@ -50,11 +50,14 @@ public class CamRoom : MonoBehaviour
             }
 
             PlayerCtrl.inst.ReadInput=false;
-            Fade.BlackInOut(()=>{
+            if(!Fade.BlackInOut(()=>{
                 room.vm.SetActive(true);
             },()=>{
                 PlayerCtrl.inst.ReadInput=true;
-            });
+            })){
+                room.vm.SetActive(true);
+                PlayerCtrl.inst.ReadInput=true;
+            }
         }
     }
     void FixedUpdate(){

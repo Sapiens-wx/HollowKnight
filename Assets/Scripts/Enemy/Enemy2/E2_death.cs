@@ -3,18 +3,15 @@ using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
 
-public class E1_hit_vertical : E1StateBase
+public class E2_death : E2StateBase
 {
     Coroutine coro;
-    float exitTime;
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
         coro = enemy.StartCoroutine(m_FixedUpdate());
-        if(PlayerCtrl.inst.transform.position.y<enemy.transform.position.y)
-            enemy.rgb.velocity=new Vector2(0,enemy.hitDist/enemy.hitInterval+.5f*enemy.hitInterval*9.8f*enemy.rgb.gravityScale);
-        exitTime=Time.time+enemy.hitInterval;
+        enemy.rgb.gravityScale=3;
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -32,7 +29,7 @@ public class E1_hit_vertical : E1StateBase
     IEnumerator m_FixedUpdate(){
         WaitForFixedUpdate wait=new WaitForFixedUpdate();
         while(true){
-            if(Time.time>=exitTime) enemy.animator.SetTrigger("attack");
+            
             yield return wait;
         }
     }

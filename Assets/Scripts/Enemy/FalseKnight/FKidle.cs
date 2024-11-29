@@ -36,7 +36,7 @@ public class FKidle : FKStateBase
         if (distToX > knight.closeToPlayerLimit) //run towards the player
             knight.animator.SetTrigger("run");
         else { //jump
-            switch(Random.Range(0, 3))
+            switch(Random.Range(0, 1))
             {
                 //back jump
                 case 0:
@@ -67,23 +67,23 @@ public class FKidle : FKStateBase
     float GetForwardJumpPos(float distToPlayer)
     {
         //far from player, should jump closer to the player.
-        if (knight.Dir == -1) //left side
-            return Random.Range(Mathf.Max(knight.leftx, PlayerCtrl.inst.transform.position.x - knight.closeToPlayerLimit), Mathf.Min(knight.rightx, PlayerCtrl.inst.transform.position.x + knight.closeToPlayerLimit));
+        if (knight.Dir == 1) //left side
+            return Random.Range(knight.transform.position.x, Mathf.Min(knight.rightx, PlayerCtrl.inst.transform.position.x-knight.closestDistToPlayer));
         else //right side
-            return Random.Range(Mathf.Max(knight.leftx, PlayerCtrl.inst.transform.position.x - knight.closeToPlayerLimit), Mathf.Min(knight.rightx, PlayerCtrl.inst.transform.position.x + knight.closeToPlayerLimit));
+            return Random.Range(knight.transform.position.x, Mathf.Max(knight.leftx, PlayerCtrl.inst.transform.position.x+knight.closestDistToPlayer));
     }
     float GetBackwardJumpPos(float distToPlayer)
     {
-        if (knight.Dir == -1) { //jump to left
-            float rightX = PlayerCtrl.inst.transform.position.x - knight.closeToPlayerLimit;
-            if (rightX < knight.leftx)
-                rightX = PlayerCtrl.inst.transform.position.x;
-            return Random.Range(knight.leftx, rightX);
+        if (knight.Dir == 1) { //jump to left
+            float leftX = PlayerCtrl.inst.transform.position.x-knight.closeToPlayerLimit;
+            if(leftX<knight.leftx)
+                leftX=knight.leftx;
+            return Random.Range(leftX, knight.transform.position.x);
         } else { //jump to right
-            float leftX = PlayerCtrl.inst.transform.position.x + knight.closeToPlayerLimit;
-            if (leftX > knight.rightx)
-                leftX = PlayerCtrl.inst.transform.position.x;
-            return Random.Range(leftX, knight.rightx);
+            float rightX = PlayerCtrl.inst.transform.position.x+knight.closeToPlayerLimit;
+            if(rightX>knight.rightx)
+                rightX=knight.rightx;
+            return Random.Range(knight.transform.position.x, rightX);
         }
     }
     IEnumerator m_FixedUpdate(){

@@ -91,14 +91,20 @@ public class PStateBase : StateMachineBehaviour
     internal void Counter(){
         if(player.onGround && Time.time-player.counterKeyDown<=player.keyDownBuffTime){
             player.counterKeyDown=-100;
-            player.animator.SetTrigger("counter");
+            if(PlayerBar.inst.CanConsume()){
+                PlayerBar.inst.Consume();
+                player.animator.SetTrigger("counter");
+            }
         }
     }
     internal void Throw(){
         if(Time.time-player.throwKeyDown<=player.keyDownBuffTime){
             player.throwChargeTime=player.throwKeyDown;
             player.throwKeyDown=-100;
-            player.animator.SetTrigger("throw_charge");
+            if(PlayerBar.inst.CanConsume()){
+                PlayerBar.inst.Consume();
+                player.animator.SetTrigger("throw_charge");
+            }
         }
     }
     internal void Attack(){

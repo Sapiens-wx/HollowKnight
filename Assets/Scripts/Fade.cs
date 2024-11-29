@@ -8,6 +8,7 @@ public class Fade : MonoBehaviour
     [SerializeField] Image img;
     [SerializeField] float duration, pauseInterval;
     public static Fade inst;
+    bool fadeInProgress;
     void Awake(){
         if(inst!=null)
             Destroy(gameObject);
@@ -16,7 +17,9 @@ public class Fade : MonoBehaviour
             inst=this;
         }
     }
-    public static void BlackInOut(TweenCallback onHalfComplete, TweenCallback onComplete){
+    public static bool BlackInOut(TweenCallback onHalfComplete, TweenCallback onComplete){
+        if(inst.fadeInProgress) return false;
+        inst.fadeInProgress=true;
         Sequence s=DOTween.Sequence();
         inst.img.color=new Color(0,0,0,0);
         s.Append(DOTween.To(()=>inst.img.color.a,val=>inst.img.color=new Color(inst.img.color.r,inst.img.color.g,inst.img.color.b,val), 1, inst.duration));
@@ -26,5 +29,9 @@ public class Fade : MonoBehaviour
         s.Append(DOTween.To(()=>inst.img.color.a,val=>inst.img.color=new Color(inst.img.color.r,inst.img.color.g,inst.img.color.b,val), 0, inst.duration));
         if(onComplete!=null)
             s.AppendCallback(onComplete);
+        s.AppendCallback(()=>{
+            inst.fadeInProgress=false;
+        });
+        return true;
     }
 }

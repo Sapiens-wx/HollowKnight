@@ -12,7 +12,11 @@ public class E2_idle : E2StateBase
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
+        try{
         coro = enemy.StartCoroutine(m_FixedUpdate());
+        } catch(System.Exception) {
+            
+        }
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks

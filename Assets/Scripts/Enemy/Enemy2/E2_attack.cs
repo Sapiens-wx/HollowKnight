@@ -11,7 +11,13 @@ public class E2_attack : E2StateBase
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
         coro = enemy.StartCoroutine(m_FixedUpdate());
-        Bullet.InstantiateB(enemy.transform.position, ((Vector2)PlayerCtrl.inst.transform.position-(Vector2)enemy.transform.position).normalized, enemy.bulletSpd);
+        Vector2 dir=((Vector2)PlayerCtrl.inst.transform.position-(Vector2)enemy.transform.position).normalized;
+        float cos=Mathf.Cos(enemy.bulletAngle*Mathf.Deg2Rad), sin=Mathf.Sin(enemy.bulletAngle*Mathf.Deg2Rad);
+        Vector2 dir1=new Vector2(dir.x*cos-dir.y*sin,dir.x*sin+dir.y*cos);
+        Vector2 dir2=new Vector2(dir.x*cos+dir.y*sin,-dir.x*sin+dir.y*cos);
+        Bullet.InstantiateB(enemy.transform.position, dir, enemy.bulletSpd);
+        Bullet.InstantiateB(enemy.transform.position, dir1, enemy.bulletSpd);
+        Bullet.InstantiateB(enemy.transform.position, dir2, enemy.bulletSpd);
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks

@@ -25,13 +25,13 @@ public class FK : FKStateBase
     {
         knight.StopCoroutine(coro);
         coro=null;
+        knight.rgb.velocity = Vector2.zero;
     }
     IEnumerator m_FixedUpdate(){
         WaitForFixedUpdate wait=new WaitForFixedUpdate();
         while(true){
             if (Mathf.Abs(knight.transform.position.x - PlayerCtrl.inst.transform.position.x) <= knight.closeToPlayerLimit)
             {
-                knight.rgb.velocity = Vector2.zero;
                 knight.animator.SetTrigger("idle");
             }
             yield return wait;

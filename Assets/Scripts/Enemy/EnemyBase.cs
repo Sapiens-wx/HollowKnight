@@ -5,6 +5,8 @@ using DG.Tweening;
 
 public class EnemyBase : MonoBehaviour
 {
+    public EnemyType enemyType;
+    public GameObject damageBox;
     [SerializeField] internal int maxHealth;
     [Header("Hit Anim")]
     [SerializeField] float hitAnimDuration;
@@ -57,17 +59,24 @@ public class EnemyBase : MonoBehaviour
     }
     public virtual void Hit(int damage){
         curHealth-=damage;
-        if (curHealth < 0) {
+        if (curHealth <= 0) {
+            damageBox.SetActive(false);
             animator.SetTrigger("die");
         }
     }
     void OnTriggerEnter2D(Collider2D collider){
         if(GameManager.IsLayer(GameManager.inst.playerSwordLayer, collider.gameObject.layer) && Time.time-.23f>hitTime){ //if is sword layer
+            if(curHealth<=0) return;
             hitTime=Time.time;
             Hit(1);
             s.Restart();
             //gain energy to the player
-            PlayerBar.inst.CurEnergy+=1;
+            switch(enemyType){
+                case EnemyType.Enemy:
+                case EnemyType.Soul:
+                    PlayerBar.inst.CurEnergy+=1;
+                    break;
+            }
         }
     }
     internal void CheckOnGround(){
@@ -78,5 +87,16 @@ public class EnemyBase : MonoBehaviour
         rightBot.x+=bounds.size.x*.9f;
         leftBot.x+=bounds.size.x*.1f;
         onGround = Physics2D.OverlapArea(leftBot,rightBot,GameManager.inst.groundLayer);
+    }
+    public virtual void Recover(){
+        if(curHealth<=0)
+            animator.SetTrigger("idle");
+        curHealth=maxHealth;
+        damageBox.SetActive(true);
+    }
+    public enum EnemyType{
+        Enemy,
+        Switch,
+        Soul
     }
 }

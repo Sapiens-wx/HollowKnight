@@ -28,16 +28,16 @@ public class FKjump : FKStateBase
         knight.StopCoroutine(coro);
         coro=null;
         knight.rgb.gravityScale=1;
+        knight.rgb.velocity=Vector2.zero;
     }
     IEnumerator m_FixedUpdate(){
         WaitForFixedUpdate wait=new WaitForFixedUpdate();
         while(true){
             if (knight.onGround && knight.rgb.velocity.y<=0)
             {
-                knight.rgb.velocity = Vector2.zero;
                 CameraCtrl.inst.ScreenShakeCM();
                 knight.animator.SetTrigger("jump_land");
-                if(knight.canJumpAndAttack && Random.Range(0,2)==0)
+                if(knight.canJumpAndAttack && Random.Range(0,10)>2)
                     knight.animator.SetTrigger("attack");
             }
             yield return wait;

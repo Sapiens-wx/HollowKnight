@@ -31,6 +31,11 @@ public class Enemy1 : EnemyBase
     void Awake(){
         inst=this;
     }
+    internal override void Start()
+    {
+        base.Start();
+        EnemyManager.inst.RegisterEnemy(this);
+    }
     void FixedUpdate(){
         CheckOnGround();
         if(!prevOnGround && onGround){ //landing
@@ -39,13 +44,14 @@ public class Enemy1 : EnemyBase
     }
     public void UpdateGroundXMinMax(){
         Bounds bounds=bc.bounds;
+        Collider2D ground=Physics2D.OverlapArea(bounds.min,bounds.max,GameManager.inst.groundLayer);
+        bounds.center=new Vector3(bounds.center.x, ground.bounds.max.y+bounds.extents.y, 0);
         Vector2 leftBot=bounds.min;
         Vector2 rightBot=leftBot;
         rightBot.x+=bounds.size.x;
         Vector2 leftTop=leftBot;
         leftTop.y+=bounds.size.y;
         Vector2 rightTop=bounds.max;
-        Collider2D ground=Physics2D.OverlapArea(leftBot+new Vector2(bounds.size.x*.1f,0),rightBot+new Vector2(-bounds.size.x*.1f,0),GameManager.inst.groundLayer);
         if(ground==null) return;
         xmin=ground.bounds.min.x;
         xmax=ground.bounds.max.x;

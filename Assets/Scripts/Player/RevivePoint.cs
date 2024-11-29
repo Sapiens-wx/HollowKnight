@@ -14,8 +14,10 @@ public class RevivePoint : MonoBehaviour
         Gizmos.DrawWireCube(bounds.center+transform.position, bounds.size);
     }
     void Start(){
-        if(defaultRevivePoint)
+        if(defaultRevivePoint){
             lastRevivePoint=this;
+            RevivePlayer();
+        }
         min=bounds.min+transform.position;
         max=bounds.max+transform.position;
         StartCoroutine(Detection());

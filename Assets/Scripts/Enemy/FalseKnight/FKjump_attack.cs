@@ -27,13 +27,13 @@ public class FKjump_attack : FKStateBase
     {
         knight.StopCoroutine(coro);
         coro=null;
+        knight.rgb.velocity=Vector2.zero;
     }
     IEnumerator m_FixedUpdate(){
         WaitForFixedUpdate wait=new WaitForFixedUpdate();
         while(true){
             if (knight.onGround && knight.rgb.velocity.y<=0)
             {
-                knight.rgb.velocity = Vector2.zero;
                 knight.animator.SetTrigger("jump_land");
             }
             yield return wait;
