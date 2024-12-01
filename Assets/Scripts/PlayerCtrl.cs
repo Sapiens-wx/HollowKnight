@@ -266,7 +266,9 @@ public class PlayerCtrl : MonoBehaviour
             inputx=(int)Input.GetAxisRaw("Horizontal");
     }
     void UpdateVelocity(){
-        rgb.velocity=v;
+        if(CamRoom.isSwitchingRoom)
+            rgb.velocity=Vector2.zero;
+        else rgb.velocity=v;
     }
     void CheckOnGround(){
         prevOnGround=onGround;

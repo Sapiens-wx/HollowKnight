@@ -8,6 +8,7 @@ public class CamRoom : MonoBehaviour
     [SerializeField] GameObject vm;
     
     public static CamRoom activeRoom;
+    [HideInInspector] public static bool isSwitchingRoom; //if is true, the player stops updating velocity and its velocity is set to 0
     bool intersect, prevIntersect;
     void OnDrawGizmosSelected(){
         Gizmos.DrawWireCube(transform.position+bounds.center, bounds.size);
@@ -50,13 +51,17 @@ public class CamRoom : MonoBehaviour
             }
 
             PlayerCtrl.inst.ReadInput=false;
+            isSwitchingRoom=true;
             if(!Fade.BlackInOut(()=>{
                 room.vm.SetActive(true);
-            },()=>{
+                },()=>{
                 PlayerCtrl.inst.ReadInput=true;
-            })){
+                isSwitchingRoom=false;
+                }))
+            {
                 room.vm.SetActive(true);
                 PlayerCtrl.inst.ReadInput=true;
+                isSwitchingRoom=false;
             }
         }
     }
