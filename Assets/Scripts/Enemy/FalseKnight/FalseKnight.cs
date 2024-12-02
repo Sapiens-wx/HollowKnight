@@ -40,6 +40,13 @@ public class FalseKnight : EnemyBase
                 }
             }
         };
+		associatedCamRoom.onPlayerExitRoom+=()=>{
+			if(doors!=null){
+				foreach(GameObject go in doors){
+                    go.SetActive(false);
+                }
+			}
+		};
         Dir=1;
         closestDistToPlayer=bc.offset.x+bc.bounds.extents.x+PlayerCtrl.inst.bc.offset.x+PlayerCtrl.inst.bc.bounds.extents.x;
     }
