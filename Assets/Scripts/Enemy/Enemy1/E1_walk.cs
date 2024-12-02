@@ -38,14 +38,14 @@ public class E1_walk : E1StateBase
             //if reach the edge, then turn and continue walking
             if(enemy.transform.position.x>enemy.xmax-.5f){
                 Vector3 pos=enemy.transform.position;
-                pos.x=enemy.xmax-.5f;
+                pos.x=enemy.xmax-.55f;
                 enemy.transform.position=pos;
                 enemy.animator.SetTrigger("turn");
                 enemy.animator.SetTrigger("walk");
             }
             else if(enemy.transform.position.x<enemy.xmin+.5f){
                 Vector3 pos=enemy.transform.position;
-                pos.x=enemy.xmin+.5f;
+                pos.x=enemy.xmin+.55f;
                 enemy.transform.position=pos;
                 enemy.animator.SetTrigger("turn");
                 enemy.animator.SetTrigger("walk");

@@ -135,7 +135,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyType: 0
   damageBox: {fileID: 7819192707795462536}
-  maxHealth: 1
+  maxHealth: 3
   hitAnimDuration: 0.07
   spr: {fileID: 5668048159409847622}
   animator: {fileID: 0}
@@ -160,7 +160,6 @@ MonoBehaviour:
   bulletAngle: 35
   hitStateDuration: 0.1
   hitDist: 1
-  spawnPos: {x: 0, y: 0}
   allowAttackTime: 0
 --- !u!50 &3646655196231364328
 Rigidbody2D:

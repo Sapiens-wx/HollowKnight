@@ -6,7 +6,7 @@ public class SavePoint : MonoBehaviour
 {    
     [SerializeField] Bounds bounds;
 
-    static SavePoint lastSavePoint;
+    public static SavePoint lastSavePoint;
     Vector2 min,max;
     void OnDrawGizmosSelected(){
         Gizmos.DrawWireCube(bounds.center+transform.position, bounds.size);

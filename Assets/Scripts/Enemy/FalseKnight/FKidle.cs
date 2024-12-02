@@ -39,7 +39,7 @@ public class FKidle : FKStateBase
         if (distToX > knight.closeToPlayerLimit) //run towards the player
             knight.animator.SetTrigger("run");
         else { //jump
-            switch(Random.Range(0, 1))
+            switch(Random.Range(0, 3))
             {
                 //back jump
                 case 0:

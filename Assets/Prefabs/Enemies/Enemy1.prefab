@@ -213,7 +213,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyType: 0
   damageBox: {fileID: 2867425658374560623}
-  maxHealth: 10
+  maxHealth: 5
   hitAnimDuration: 0.07
   spr: {fileID: 4252093009570185956}
   animator: {fileID: 0}
