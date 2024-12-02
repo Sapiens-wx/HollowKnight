@@ -46,6 +46,9 @@ public class FalseKnight : EnemyBase
                     go.SetActive(false);
                 }
 			}
+			if(curHealth>0){ //if the player dies, but the boss did not, then recover the boss
+				Recover();
+			}
 		};
         Dir=1;
         closestDistToPlayer=bc.offset.x+bc.bounds.extents.x+PlayerCtrl.inst.bc.offset.x+PlayerCtrl.inst.bc.bounds.extents.x;

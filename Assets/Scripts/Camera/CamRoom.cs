@@ -36,7 +36,7 @@ public class CamRoom : MonoBehaviour
         }
         return null;
     }
-    bool IntersectBounds(Vector2 pos){
+    public bool IntersectBounds(Vector2 pos){
         Vector2 min=bounds.min+transform.position;
         Vector2 max=bounds.max+transform.position;
         return !(min.x>pos.x||min.y>pos.y||max.x<pos.x||max.y<pos.y);

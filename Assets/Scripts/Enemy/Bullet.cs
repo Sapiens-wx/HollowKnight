@@ -8,6 +8,7 @@ public class Bullet : MonoBehaviour
 {
     [SerializeField] Rigidbody2D rgb;
     [SerializeField] GameObject damageBox;
+    EnemyBase shotBy;
     void OnEnable(){
         PlayerCtrl.inst.OnPlayerHit+=OnPlayerHit;
         Destroy(gameObject, 15);
@@ -23,10 +24,16 @@ public class Bullet : MonoBehaviour
     void OnCollisionEnter2D(Collision2D collision){
         Destroy(gameObject);
     }
-    public static Bullet InstantiateB(Vector3 pos, Vector2 dir, float spd){
+    public static Bullet InstantiateB(EnemyBase shotBy, Vector3 pos, Vector2 dir, float spd){
         Bullet ret=Instantiate(GameManager.inst.bullet_enemy2.gameObject, pos, Quaternion.identity).GetComponent<Bullet>();
+        ret.shotBy=shotBy;
         ret.transform.rotation=Quaternion.AngleAxis(Vector2.SignedAngle(Vector2.left, dir), Vector3.forward);
         ret.rgb.velocity=dir*spd;
         return ret;
+    }
+    void FixedUpdate(){
+        if(!shotBy.associatedCamRoom.IntersectBounds(transform.position)){
+            Destroy(gameObject);
+        }
     }
 }
