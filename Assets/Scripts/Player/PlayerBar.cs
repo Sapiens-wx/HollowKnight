@@ -22,8 +22,9 @@ public class PlayerBar : MonoBehaviour
         set{
             maxHealth=value;
             for(int i=lives.Count;i<maxHealth;++i){
-                Life go = Instantiate(lifePrefab).GetComponent<Life>();
-                go.transform.SetParent(livesGrid);
+                //Life go = Instantiate(lifePrefab).GetComponent<Life>();
+                //go.transform.SetParent(livesGrid);
+                Life go=livesGrid.GetChild(i).GetComponent<Life>();
                 lives.Add(go);
             }
         }
@@ -37,8 +38,9 @@ public class PlayerBar : MonoBehaviour
             maxEnergy=value;
             int actualMaxE=maxEnergy>>1;
             for(int i=energies.Count;i<actualMaxE;++i){
-                Energy go = Instantiate(energyPrefab).GetComponent<Energy>();
-                go.transform.SetParent(energyGrid);
+                //Energy go = Instantiate(energyPrefab).GetComponent<Energy>();
+                //go.transform.SetParent(energyGrid);
+                Energy go=energyGrid.GetChild(i).GetComponent<Energy>();
                 energies.Add(go);
             }
         }

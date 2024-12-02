@@ -11,8 +11,6 @@ public class Phit : PStateBase
         player.v.y=0;
         player.hitAnim.Restart();
         animator.SetTrigger(player.onGround?"hit_ground":"hit_air");
-        //deal damage
-        PlayerBar.inst.SetCurHealth(PlayerBar.inst.CurHealth-1, player.hitBy);
         //hit effect
         PlayerEffects.inst.PlayEffect(PlayerEffects.EffectType.Hit);
     }
@@ -23,8 +21,4 @@ public class Phit : PStateBase
     //    
     //}
 
-    // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
-    override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    {
-    }
 }

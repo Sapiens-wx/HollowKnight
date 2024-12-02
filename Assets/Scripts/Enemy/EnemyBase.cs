@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-public class EnemyBase : MonoBehaviour
+public abstract class EnemyBase : MonoBehaviour
 {
     public EnemyType enemyType;
     public GameObject damageBox;
@@ -30,11 +30,16 @@ public class EnemyBase : MonoBehaviour
         }
     }
     internal int curHealth;
+    Vector2 spawnPos;
     //ground check
     [HideInInspector] public bool onGround, prevOnGround;
+    //camRoom
+    [HideInInspector] public CamRoom associatedCamRoom;
 
     Sequence s;
     internal virtual void Start(){
+        associatedCamRoom = CamRoom.WhichCamRoom(transform.position);
+
         hitTime=-100;
         Dir=1;
 
@@ -42,6 +47,7 @@ public class EnemyBase : MonoBehaviour
         rgb=GetComponent<Rigidbody2D>();
         bc=GetComponent<Collider2D>();
 
+        spawnPos=transform.position;
         curHealth=maxHealth;
         matPB=new MaterialPropertyBlock();
         spr.GetPropertyBlock(matPB);
@@ -57,18 +63,34 @@ public class EnemyBase : MonoBehaviour
         }, 1, hitAnimDuration).SetLoops(2, LoopType.Yoyo));
         s.Pause();
     }
-    public virtual void Hit(int damage){
-        curHealth-=damage;
+    public virtual void Hit(){
+        switch(PlayerCtrl.inst.lastAttackType){
+            case PlayerCtrl.AttackType.SlashHorizontal: 
+            case PlayerCtrl.AttackType.SlashUp:
+            case PlayerCtrl.AttackType.SlashDown:
+            case PlayerCtrl.AttackType.Other:
+                curHealth-=1;
+                break;
+            case PlayerCtrl.AttackType.Counter:
+                curHealth-=2;
+                break;
+            case PlayerCtrl.AttackType.Throw:
+                curHealth-=3;
+                break;
+        }
         if (curHealth <= 0) {
             damageBox.SetActive(false);
             animator.SetTrigger("die");
+            OnDead();
         }
+    }
+    internal virtual void OnDead(){
     }
     void OnTriggerEnter2D(Collider2D collider){
         if(GameManager.IsLayer(GameManager.inst.playerSwordLayer, collider.gameObject.layer) && Time.time-.23f>hitTime){ //if is sword layer
             if(curHealth<=0) return;
             hitTime=Time.time;
-            Hit(1);
+            Hit();
             s.Restart();
             //gain energy to the player
             switch(enemyType){
@@ -93,6 +115,7 @@ public class EnemyBase : MonoBehaviour
             animator.SetTrigger("idle");
         curHealth=maxHealth;
         damageBox.SetActive(true);
+        transform.position=spawnPos;
     }
     public enum EnemyType{
         Enemy,

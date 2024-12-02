@@ -34,7 +34,7 @@ public class E1_idle : E1StateBase
     }
     IEnumerator RandWalk(){
         WaitForFixedUpdate wait=new WaitForFixedUpdate();
-        while(!enemy.onGround){
+        while(!enemy.onGround || enemy.associatedCamRoom!=CamRoom.activeRoom){
             yield return wait;
         }
         yield return new WaitForSeconds(UnityEngine.Random.Range(enemy.restInterval-enemy.restIntervalRange/2, enemy.restInterval+enemy.restIntervalRange/2));

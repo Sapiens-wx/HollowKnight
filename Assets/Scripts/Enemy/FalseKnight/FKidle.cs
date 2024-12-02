@@ -31,6 +31,9 @@ public class FKidle : FKStateBase
     }
     IEnumerator RandomAction()
     {
+        WaitForFixedUpdate wait=new WaitForFixedUpdate();
+        while(knight.associatedCamRoom!=CamRoom.activeRoom)
+            yield return wait;
         yield return new WaitForSeconds(UnityEngine.Random.Range(actionWaitTime - actionWaitTimeRange / 2, actionWaitTime + actionWaitTimeRange / 2));
         float distToX = Mathf.Abs(PlayerCtrl.inst.transform.position.x - knight.transform.position.x);
         if (distToX > knight.closeToPlayerLimit) //run towards the player

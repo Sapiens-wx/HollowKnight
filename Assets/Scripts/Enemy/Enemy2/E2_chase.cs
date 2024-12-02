@@ -35,6 +35,11 @@ public class E2_chase : E2StateBase
         while(true){
             Vector2 dir=((Vector2)PlayerCtrl.inst.transform.position-(Vector2)enemy.transform.position).normalized;
             enemy.rgb.velocity=dir*enemy.chaseSpd;
+            if(CamRoom.activeRoom!=enemy.associatedCamRoom) enemy.animator.SetTrigger("idle");
+            if(Mathf.Sign(PlayerCtrl.inst.transform.position.x-enemy.transform.position.x)!=enemy.Dir){
+                enemy.animator.SetTrigger("turn");
+                enemy.animator.SetTrigger("chase");
+            }
             yield return wait;
         }
     }

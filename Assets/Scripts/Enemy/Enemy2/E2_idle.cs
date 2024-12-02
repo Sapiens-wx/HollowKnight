@@ -1,7 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
-using Unity.Collections;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class E2_idle : E2StateBase

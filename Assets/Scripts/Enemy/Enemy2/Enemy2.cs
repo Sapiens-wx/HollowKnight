@@ -16,7 +16,6 @@ public class Enemy2 : EnemyBase
     public float hitStateDuration;
     public float hitDist;
 
-    [HideInInspector] public Vector2 spawnPos;
     [HideInInspector] public float allowAttackTime;
     void OnDrawGizmosSelected(){
         Gizmos.DrawWireCube(transform.position+detectBounds.center, detectBounds.size);
@@ -29,20 +28,21 @@ public class Enemy2 : EnemyBase
     internal override void Start()
     {
         base.Start();
-        spawnPos=transform.position;
+        associatedCamRoom.onPlayerExitRoom+=Recover;
         allowAttackTime=0;
         EnemyManager.inst.RegisterEnemy(this);
     }
 
     public bool DetectPlayer(){
+        if(CamRoom.activeRoom!=associatedCamRoom) return false;
         Vector2 min=detectBounds.min+transform.position;
         Vector2 max=detectBounds.max+transform.position;
         Vector2 pos=PlayerCtrl.inst.transform.position;
         return !(min.x>pos.x||min.y>pos.y||max.x<pos.x||max.y<pos.y);
     }
-    public override void Hit(int damage)
+    public override void Hit()
     {
-        base.Hit(damage);
+        base.Hit();
         float spd=hitDist/hitStateDuration;
         switch(PlayerCtrl.inst.lastAttackType){
             case PlayerCtrl.AttackType.Throw:

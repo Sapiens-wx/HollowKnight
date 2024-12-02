@@ -286,7 +286,7 @@ public class PlayerCtrl : MonoBehaviour
     }
     void OnTriggerStay2D(Collider2D collider){
         //if is enemy, player is hit
-        if(PlayerCtrl.inst.hittable && GameManager.IsLayer(GameManager.inst.enemyLayer, collider.gameObject.layer)){ 
+        if((PlayerCtrl.inst.hittable || collider.CompareTag("spike")) && GameManager.IsLayer(GameManager.inst.enemyLayer, collider.gameObject.layer)){ 
             PlayerCtrl.inst.animator.SetTrigger("hit");
             hitBy=collider;
             OnPlayerHit?.Invoke();

@@ -12,6 +12,8 @@ public class FalseKnight : EnemyBase
     public float leftx, rightx, closeToPlayerLimit;
     [Header("attack")]
     public Vector2 bulletInstPos;
+    [Header("Lock Room")]
+    [SerializeField] GameObject[] doors;
 
     public static FalseKnight inst;
     //jump/jump_attack state
@@ -31,8 +33,23 @@ public class FalseKnight : EnemyBase
     internal override void Start()
     {
         base.Start();
+        associatedCamRoom.onPlayerEnterRoom+=()=>{
+            if(doors!=null && curHealth>0){
+                foreach(GameObject go in doors){
+                    go.SetActive(true);
+                }
+            }
+        };
         Dir=1;
         closestDistToPlayer=bc.offset.x+bc.bounds.extents.x+PlayerCtrl.inst.bc.offset.x+PlayerCtrl.inst.bc.bounds.extents.x;
+    }
+    internal override void OnDead()
+    {
+        if(doors!=null){
+            foreach(GameObject go in doors){
+                go.SetActive(false);
+            }
+        }
     }
     private void FixedUpdate()
     {

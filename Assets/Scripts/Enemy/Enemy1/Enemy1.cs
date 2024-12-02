@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Build.Content;
 using UnityEngine;
 
 public class Enemy1 : EnemyBase
@@ -34,6 +31,7 @@ public class Enemy1 : EnemyBase
     internal override void Start()
     {
         base.Start();
+        associatedCamRoom.onPlayerExitRoom+=Recover;
         EnemyManager.inst.RegisterEnemy(this);
     }
     void FixedUpdate(){
@@ -68,11 +66,12 @@ public class Enemy1 : EnemyBase
     }
     public void UpdateSeesPlayer(){
         prevSeesPlayer=seesPlayer;
-        seesPlayer=Physics2D.OverlapArea(detectBounds.min+transform.position, detectBounds.max+transform.position, GameManager.inst.playerLayer);
+        if(CamRoom.activeRoom!=associatedCamRoom) seesPlayer=false;
+        else seesPlayer=Physics2D.OverlapArea(detectBounds.min+transform.position, detectBounds.max+transform.position, GameManager.inst.playerLayer);
     }
-    public override void Hit(int damage)
+    public override void Hit()
     {
-        base.Hit(damage);
+        base.Hit();
         //judge whether it is hit from top or horizontally
         if(Mathf.Abs(PlayerCtrl.inst.transform.position.y-transform.position.y)<.8f){ //horizontal
             animator.SetTrigger("hit_horizontal");
