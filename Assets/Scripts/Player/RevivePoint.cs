@@ -5,6 +5,7 @@ using UnityEngine;
 public class RevivePoint : MonoBehaviour
 {    
     [SerializeField] bool defaultRevivePoint;
+    [SerializeField] SpriteRenderer spr;
     [SerializeField] Bounds bounds;
 
     static RevivePoint lastRevivePoint;
@@ -34,6 +35,7 @@ public class RevivePoint : MonoBehaviour
     void Update(){
         if(intersecting && Input.GetKeyDown(KeyCode.E)){
             lastRevivePoint=this;
+            spr.color=new Color(.5f,.5f,.5f,1);
         }
     }
     public static void RevivePlayer(){
