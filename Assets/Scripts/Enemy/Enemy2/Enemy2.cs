@@ -17,6 +17,7 @@ public class Enemy2 : EnemyBase
     public float hitDist;
 
     [HideInInspector] public float allowAttackTime;
+	[HideInInspector] public Vector2 hitVelocity;
     void OnDrawGizmosSelected(){
         Gizmos.DrawWireCube(transform.position+detectBounds.center, detectBounds.size);
         Gizmos.color=Color.red;
@@ -47,15 +48,15 @@ public class Enemy2 : EnemyBase
         switch(PlayerCtrl.inst.lastAttackType){
             case PlayerCtrl.AttackType.Throw:
             case PlayerCtrl.AttackType.SlashHorizontal: 
-                rgb.velocity=new Vector2(PlayerCtrl.inst.dir==-1?spd:-spd,0);
+                hitVelocity=new Vector2(PlayerCtrl.inst.dir==-1?spd:-spd,0);
                 break;
             case PlayerCtrl.AttackType.Counter:
             case PlayerCtrl.AttackType.Other:
             case PlayerCtrl.AttackType.SlashUp:
-                rgb.velocity=((Vector2)transform.position-(Vector2)PlayerCtrl.inst.transform.position-PlayerCtrl.inst.bc.offset).normalized*spd;
+				hitVelocity=Vector2.up*spd;
                 break;
             case PlayerCtrl.AttackType.SlashDown:
-                rgb.velocity=new Vector2(0,-spd);
+                hitVelocity=new Vector2(0,-spd);
                 break;
         }
         animator.SetTrigger("hit");
