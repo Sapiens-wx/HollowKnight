@@ -34,13 +34,18 @@ public class FalseKnight : EnemyBase
     {
         base.Start();
         associatedCamRoom.onPlayerEnterRoom+=()=>{
-            if(doors!=null && curHealth>0){
-                foreach(GameObject go in doors){
-                    go.SetActive(true);
+            if(curHealth>0){
+                SFX.Play(SFX.inst.fsm);
+                if(doors!=null){
+                    foreach(GameObject go in doors){
+                        go.SetActive(true);
+                    }
                 }
             }
         };
 		associatedCamRoom.onPlayerExitRoom+=()=>{
+            if(SFX.inst.audioSource.clip!=SFX.inst.bgm)
+                SFX.Play(SFX.inst.bgm);
 			if(doors!=null){
 				foreach(GameObject go in doors){
                     go.SetActive(false);
