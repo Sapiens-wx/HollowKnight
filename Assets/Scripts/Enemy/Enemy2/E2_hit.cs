@@ -11,13 +11,14 @@ public class E2_hit : E2StateBase
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
         coro = enemy.StartCoroutine(m_FixedUpdate());
+		enemy.rgb.velocity=enemy.hitVelocity;
         hitCoro=enemy.StartCoroutine(DelayExit());
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     //override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     //{
-    //    
+    //
     //}
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
