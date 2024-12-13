@@ -225,25 +225,25 @@ public class PlayerCtrl : MonoBehaviour
         if(readInput){
             if(Input.GetKeyDown(KeyCode.E))//recover
                 recoverKeyDown=Time.time;
-            else if(Input.GetKeyDown(KeyCode.O))//counter
+            else if(Input.GetKeyDown(KeyCode.O)||Input.GetKeyDown(KeyCode.Semicolon))//counter
                 counterKeyDown=Time.time;
-            else if(Input.GetKeyDown(KeyCode.U)) //skill
+            else if(Input.GetKeyDown(KeyCode.U)||Input.GetKeyDown(KeyCode.K)) //skill
                 skillKeyDown=Time.time;
-            else if(Input.GetKeyDown(KeyCode.I)){//throw
+            else if(Input.GetKeyDown(KeyCode.I)||Input.GetKeyDown(KeyCode.L)){//throw
                 throwKeyDown=Time.time;
                 throwKeyUp=false;
             }
-            else if(Input.GetKeyDown(KeyCode.L))//dash
+            else if(Input.GetKeyDown(KeyCode.Slash))//dash
                 dashKeyDown=Time.time;
             else if(Input.GetKeyDown(jumpKey))
                 jumpKeyDown=Time.time;
             else if(Input.GetKeyUp(jumpKey))
                 jumpKeyUp=true;
-            else if(Input.GetKeyDown(KeyCode.J)){
+            else if(Input.GetKeyDown(KeyCode.Comma)){
                 attackKeyDown=Time.time;
             }
             
-            if(Input.GetKeyUp(KeyCode.I))//throw end charge
+            if(Input.GetKeyUp(KeyCode.I)||Input.GetKeyUp(KeyCode.L))//throw end charge
                 throwKeyUp=true;
             if(Input.GetKeyUp(KeyCode.E)){//recover
                 recoverKeyUp=true;

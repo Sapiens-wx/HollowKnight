@@ -1869,7 +1869,7 @@ MonoBehaviour:
   maxFallSpd: -10
   keyDownBuffTime: 0.08
   xspd: 6
-  jumpKey: 107
+  jumpKey: 46
   jumpHeight: 2.8
   jumpInterval: 0.34
   coyoteTime: 0.1
@@ -6477,7 +6477,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 9
   m_Sprite: {fileID: 887914885, guid: 13c41802c0f49944fa6b66fc1ffc32f6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
