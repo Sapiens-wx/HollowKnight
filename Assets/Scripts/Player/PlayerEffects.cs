@@ -36,7 +36,7 @@ public class PlayerEffects : MonoBehaviour
                     PlayEffect(dashEffect, dashInterval, dashEffectSprs, dashEffectOffset);
                 break;
             case EffectType.Hit:
-                    PlayEffect(hitSpr, hitInterval, hitEffectSprs, hitEffectOffset);
+                    //PlayEffect(hitSpr, hitInterval, hitEffectSprs, hitEffectOffset);
                 break;
         }
     }
