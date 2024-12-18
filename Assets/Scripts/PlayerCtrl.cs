@@ -292,6 +292,16 @@ public class PlayerCtrl : MonoBehaviour
             OnPlayerHit?.Invoke();
         }
     }
+    void OnCollisionEnter2D(Collision2D collision){
+        if(GameManager.IsLayer(GameManager.inst.movablePlatformLayer, collision.gameObject.layer)){
+            collision.transform.GetComponent<MovablePlatform>().OnPlayerCollide();
+        }
+    }
+    void OnCollisionExit2D(Collision2D collision){
+        if(GameManager.IsLayer(GameManager.inst.movablePlatformLayer, collision.gameObject.layer)){
+            collision.transform.GetComponent<MovablePlatform>().OnPlayerCollideExit();
+        }
+    }
     //0b1000 is the mask for slash
     public enum AttackType{
         SlashHorizontal=0b1001,
