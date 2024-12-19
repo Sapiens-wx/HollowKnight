@@ -6,10 +6,14 @@ using DG.Tweening;
 public class MovablePlatform : MonoBehaviour
 {
     public float speed;
+    public Color toColor;
 
+    SpriteRenderer spr;
     float originalYPos;
     bool playerStay;
+    Color originalColor;
     void Start(){
+        spr=GetComponent<SpriteRenderer>();
         originalYPos=transform.position.y;
         playerStay=false;
     }
@@ -22,9 +26,12 @@ public class MovablePlatform : MonoBehaviour
         }
     }
     public void OnPlayerCollide(){
+        originalColor=spr.color;
+        spr.color=toColor;
         playerStay=true;
     }
     public void OnPlayerCollideExit(){
+        spr.color=originalColor;
         playerStay=false;
     }
 }

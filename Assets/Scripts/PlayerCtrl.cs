@@ -84,6 +84,8 @@ public class PlayerCtrl : MonoBehaviour
     [HideInInspector] public Collider2D hitBy;
     //read input
     bool readInput;
+    //movable platform
+    MovablePlatform lastStandingPlatform;
     public bool ReadInput{
         get=>readInput;
         set{
@@ -272,9 +274,18 @@ public class PlayerCtrl : MonoBehaviour
     }
     void CheckOnGround(){
         prevOnGround=onGround;
-        onGround = Physics2D.OverlapArea((Vector2)transform.position+leftBot, (Vector2)transform.position+rightBot, GameManager.inst.groundLayer);
+        Collider2D hit = Physics2D.OverlapArea((Vector2)transform.position+leftBot, (Vector2)transform.position+rightBot, GameManager.inst.groundLayer);
+        onGround=hit;
         if(onGround)
             canDash=true;
+        if(onGround&&!prevOnGround&&GameManager.IsLayer(GameManager.inst.movablePlatformLayer, hit.gameObject.layer)){ //landing
+            lastStandingPlatform=hit.transform.GetComponent<MovablePlatform>();
+            lastStandingPlatform.OnPlayerCollide();
+        }
+        else if(prevOnGround&&!onGround && lastStandingPlatform!=null){ //leave the ground
+            lastStandingPlatform.OnPlayerCollideExit();
+            lastStandingPlatform=null;
+        }
     }
     void CheckWall(){
         onWall = Physics2D.OverlapArea((Vector2)transform.position+climbBot, (Vector2)transform.position+climbTop, GameManager.inst.groundLayer);
@@ -290,16 +301,6 @@ public class PlayerCtrl : MonoBehaviour
             PlayerCtrl.inst.animator.SetTrigger("hit");
             hitBy=collider;
             OnPlayerHit?.Invoke();
-        }
-    }
-    void OnCollisionEnter2D(Collision2D collision){
-        if(GameManager.IsLayer(GameManager.inst.movablePlatformLayer, collision.gameObject.layer)){
-            collision.transform.GetComponent<MovablePlatform>().OnPlayerCollide();
-        }
-    }
-    void OnCollisionExit2D(Collision2D collision){
-        if(GameManager.IsLayer(GameManager.inst.movablePlatformLayer, collision.gameObject.layer)){
-            collision.transform.GetComponent<MovablePlatform>().OnPlayerCollideExit();
         }
     }
     //0b1000 is the mask for slash
